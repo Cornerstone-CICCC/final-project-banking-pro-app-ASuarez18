@@ -475,21 +475,29 @@ async function transferFunds() {
 
     data.accounts.push(toAccount);
   } else {
-    // ? Fix for accounts that end with 7 not receiving the money (Easter Egg)
+    // ? Fix for accounts that end with 7 not receiving the money
     // if (!toId.trim().endsWith('7')) {
     //   toAccount.balance += amount;
     // }
     toAccount.balance += amount;
 
-    if (amount <= 500) {
-      toAccount.transactions.push({
-        type: 'TRANSFER_IN',
-        amount,
-        timestamp,
-        balanceAfter: toAccount.balance,
-        description: `From ${fromId.trim()}`,
-      });
-    }
+    // ? Fix for accounts that receive more than 500 in a single transfer not recording the transaction
+    toAccount.transactions.push({
+      type: 'TRANSFER_IN',
+      amount,
+      timestamp,
+      balanceAfter: toAccount.balance,
+      description: `From ${fromId.trim()}`,
+    });
+    // if (amount <= 500) {
+    //   toAccount.transactions.push({
+    //     type: 'TRANSFER_IN',
+    //     amount,
+    //     timestamp,
+    //     balanceAfter: toAccount.balance,
+    //     description: `From ${fromId.trim()}`,
+    //   });
+    // }
   }
 
   saveData();
@@ -555,9 +563,9 @@ async function deleteAccount() {
   console.log(chalk.bold('Delete Account'));
 
   const id = await ask('Account ID: ');
-  
+
   const index = data.accounts.findIndex((account) => account.id === id.trim());
-  
+
   if (index === -1) {
     console.log(chalk.red('Account not found.'));
     await pause();
@@ -571,7 +579,7 @@ async function deleteAccount() {
     await pause();
     return;
   }
-  
+
   data.accounts.splice(index, 1);
   saveData();
 
