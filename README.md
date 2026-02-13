@@ -38,9 +38,10 @@ You will receive a CLI banking app. Your job is to test the app, document findin
 **TEST-PLAN.md Requirements**
 Your test plan must be valid Markdown and include a table with columns such as:
 
-| Test ID | Feature | Environment | Steps | Expected Result | Actual Result | Status | Notes/Defect |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| TP-001 | Create Account | Node.js + OS info | 1. ... 2. ... | ... | ... | Pass/Fail | ... |
+| Test ID | Feature        | Environment       | Steps         | Expected Result | Actual Result | Status    | Notes/Defect |
+| ------- | -------------- | ----------------- | ------------- | --------------- | ------------- | --------- | ------------ |
+| TP-001  | Create Account | Node.js + OS info | 1. ... 2. ... | ...             | ...           | Pass/Fail | ...          |
+
 
 Include enough detail so another tester could reproduce the issue from your Steps and Environment fields.
 

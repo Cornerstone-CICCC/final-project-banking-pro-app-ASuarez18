@@ -1,0 +1,23 @@
+/* === Cambiar color del título principal de la nota === */
+/* Preview Mode */
+.markdown-preview-view h1:first-of-type {
+  color: var(--text-title-h1, #00f56a) !important; /* puedes usar tus variables */
+  text-shadow: 0 0 10px rgba(0, 245, 106, 0.5); /* opcional, efecto glow */
+}
+
+/* Editor (Live Preview) */
+.cm-header-1:first-of-type {
+  color: var(--text-title-h1, #00f56a) !important;
+}
+
+/* === Cambiar color del nombre de la nota en la parte superior === */
+/* En la barra superior (cuando está abierto el archivo) */
+.view-header-title {
+  color: var(--text-accent2, #00ddff) !important;
+  text-shadow: 0 0 8px rgba(0, 221, 255, 0.5); /* opcional */
+}
+
+/* En las pestañas (tabs) */
+.workspace-tab-header-inner-title {
+  color: var(--text-accent2, #00ddff) !important;
+}

@@ -1,0 +1,27 @@
+/* === Bold & Italic Coloring Snippet === */
+
+/* 🔹 Texto en negrita (bold) */
+.markdown-preview-view strong,
+.cm-strong {
+  /* color: var(--orange) !important; */
+  color: #ffb891 !important;
+  font-weight: 700 !important;
+}
+
+/* 🔹 Texto en cursiva (italic) */
+.markdown-preview-view em,
+.cm-em {
+  /* color: var(--purple) !important; */
+  color: #96b7ff !important;
+  font-style: italic !important;
+}
+
+/* 🔹 Negrita + cursiva combinadas */
+.markdown-preview-view strong em,
+.markdown-preview-view em strong,
+.cm-strong.cm-em {
+  /* color: var(--magenta) !important; */
+  color: #c498ff !important;
+  font-weight: 700 !important;
+  font-style: italic !important;
+}

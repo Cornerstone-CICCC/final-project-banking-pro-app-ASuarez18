@@ -1,0 +1,29 @@
+/* === JetBrains Mono para bloques y líneas de código === */
+
+/* Bloques de código en vista previa */
+.markdown-preview-view pre code,
+.markdown-rendered pre code {
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 0.95em;
+}
+
+/* Código inline (entre backticks) */
+.markdown-preview-view code,
+.markdown-rendered code {
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 0.95em;
+}
+
+/* Bloques de código en el editor (modo Live Preview o Source) */
+.cm-s-obsidian .cm-inline-code,
+.cm-s-obsidian .cm-hmd-codeblock,
+.cm-s-obsidian .HyperMD-codeblock,
+.cm-s-obsidian span.cm-inline-code {
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 0.95em;
+}
+
+/* Ajuste opcional para alineación vertical más limpia */
+.cm-line, .markdown-preview-view pre {
+  line-height: 1.45em;
+}

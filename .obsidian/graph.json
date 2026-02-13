@@ -1,0 +1,72 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": false,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:Notes/freeCodeCamp  ",
+      "color": {
+        "a": 1,
+        "rgb": 4145067
+      }
+    },
+    {
+      "query": "path:\"Notes/The Odin Project\"  ",
+      "color": {
+        "a": 1,
+        "rgb": 11106603
+      }
+    },
+    {
+      "query": "path:Notes/LinkedIn  ",
+      "color": {
+        "a": 1,
+        "rgb": 226984
+      }
+    },
+    {
+      "query": "path:Projects  ",
+      "color": {
+        "a": 1,
+        "rgb": 13829030
+      }
+    },
+    {
+      "query": "path:Books  ",
+      "color": {
+        "a": 1,
+        "rgb": 13064028
+      }
+    },
+    {
+      "query": "path:Volunteer  ",
+      "color": {
+        "a": 1,
+        "rgb": 11921452
+      }
+    },
+    {
+      "query": "path:Notes/web.dev  ",
+      "color": {
+        "a": 1,
+        "rgb": 11566843
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": -0.7,
+  "nodeSizeMultiplier": 0.880314792393704,
+  "lineSizeMultiplier": 1.59467274410655,
+  "collapse-forces": true,
+  "centerStrength": 0.605939747881205,
+  "repelStrength": 13.0304109393918,
+  "linkStrength": 1,
+  "linkDistance": 64,
+  "scale": 0.54725396017976,
+  "close": true
+}

@@ -1,0 +1,12 @@
+{
+  "accentColor": "",
+  "cssTheme": "Dark Moss",
+  "theme": "obsidian",
+  "enabledCssSnippets": [
+    "jetbrains-code-font",
+    "bold-italic-colors",
+    "note-title-color",
+    "math-style"
+  ],
+  "baseFontSize": 18
+}

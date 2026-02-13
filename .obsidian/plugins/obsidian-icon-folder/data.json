@@ -1,0 +1,322 @@
+{
+  "settings": {
+    "migrated": 6,
+    "iconPacksPath": ".obsidian/icons",
+    "fontSize": 16,
+    "emojiStyle": "native",
+    "iconColor": null,
+    "recentlyUsedIcons": [
+      "BoBxMoneyWithdraw",
+      "BoBxsBookContent",
+      "SiRepublicofgamers",
+      "FarMoneyBill1",
+      "BoBxsBulb"
+    ],
+    "recentlyUsedIconsSize": 5,
+    "rules": [],
+    "extraMargin": {
+      "top": 0,
+      "right": 4,
+      "bottom": 0,
+      "left": 0
+    },
+    "iconInTabsEnabled": false,
+    "iconInTitleEnabled": false,
+    "iconInTitlePosition": "above",
+    "iconInFrontmatterEnabled": false,
+    "iconInFrontmatterFieldName": "icon",
+    "iconColorInFrontmatterFieldName": "iconColor",
+    "iconsBackgroundCheckEnabled": false,
+    "iconsInNotesEnabled": true,
+    "iconsInLinksEnabled": true,
+    "iconIdentifier": ":",
+    "lucideIconPackType": "native",
+    "debugMode": false,
+    "useInternalPlugins": false
+  },
+  "Excalidraw": "LiPencil",
+  "Home Page.md": {
+    "iconName": "LiHome",
+    "iconColor": "#4dfefb"
+  },
+  "Notes": {
+    "iconName": "LiNotebookTabs",
+    "iconColor": "#964417"
+  },
+  "Notes/LinkedIn": {
+    "iconName": "SiLinkedin",
+    "iconColor": "#0e76a8"
+  },
+  "Notes/LinkedIn/LinkedIn.md": {
+    "iconName": "SiLinkedin",
+    "iconColor": "#0e76a8"
+  },
+  "Notes/LinkedIn/Courses": "LiClipboardList",
+  "Notes/LinkedIn/Courses/JavaScript": {
+    "iconName": "SiJavascript",
+    "iconColor": "#f0db4f"
+  },
+  "Notes/LinkedIn/Courses/JavaScript/Learning the JavaScript Language.md": {
+    "iconName": "LiPencil",
+    "iconColor": "#f0db4f"
+  },
+  "Notes/LinkedIn/Courses/Docker": {
+    "iconName": "SiDocker",
+    "iconColor": "#2496ed"
+  },
+  "Notes/LinkedIn/Courses/Docker/Learning Docker.md": {
+    "iconName": "LiBook",
+    "iconColor": "#2496ed"
+  },
+  "Notes/LinkedIn/Courses/SQL": "SiSqlite",
+  "Notes/LinkedIn/Courses/SQL/SQL Essential Training": {
+    "iconName": "SiSqlite",
+    "iconColor": "#8cafc8"
+  },
+  "Notes/LinkedIn/Courses/SQL/SQL Essential Training/SQL Essential Training.md": {
+    "iconName": "SiSqlite",
+    "iconColor": "#8cafc8"
+  },
+  "Training": {
+    "iconName": "SiTrainerroad",
+    "iconColor": "#66c7bb"
+  },
+  "Books": {
+    "iconName": "LiBookOpen",
+    "iconColor": "#7388f2"
+  },
+  "Books/Cracking the Code Interview": {
+    "iconName": "LiCode2",
+    "iconColor": "#afdc00"
+  },
+  "Books/Cracking the Code Interview/Chapters": {
+    "iconName": "LiList",
+    "iconColor": "#93b18b"
+  },
+  "Books/Cracking the Code Interview/Cracking the Code Interview.md": {
+    "iconName": "LiCode2",
+    "iconColor": "#afdc00"
+  },
+  "Quick Notes.md": {
+    "iconName": "SiThunderstore",
+    "iconColor": "#fff70a"
+  },
+  "Books/Grokking Algorithms": {
+    "iconName": "SiThealgorithms",
+    "iconColor": "#ff3c3c"
+  },
+  "Books/Grokking Algorithms/Grokking Algorithms.md": {
+    "iconName": "SiThealgorithms",
+    "iconColor": "#ff3c3c"
+  },
+  "Books/Grokking Algorithms/Chapters": {
+    "iconName": "LiList",
+    "iconColor": "#ff6b6b"
+  },
+  "Books/Grokking Algorithms/Code Lab": {
+    "iconName": "LiFlaskConical",
+    "iconColor": "#ff7a7a"
+  },
+  "Notes/Notes.md": {
+    "iconName": "LiNotebook",
+    "iconColor": "#b95941"
+  },
+  "Books/Books.md": {
+    "iconName": "LiBookOpen",
+    "iconColor": "#729de4"
+  },
+  "Notes/LinkedIn/Courses/JavaScript/JavaScript.md": {
+    "iconName": "SiJavascript",
+    "iconColor": "#f0db4f"
+  },
+  "Notes/JSCAMP/1_Introduction": "1️⃣",
+  "Notes/JSCAMP": {
+    "iconName": "SiJavascript",
+    "iconColor": "#f0dc50"
+  },
+  "Notes/freeCodeCamp": {
+    "iconName": "SiFreecodecamp",
+    "iconColor": "#dcdcdc"
+  },
+  "Notes/freeCodeCamp/freeCodeCamp.md": {
+    "iconName": "SiFreecodecamp",
+    "iconColor": "#dcdcdc"
+  },
+  "Notes/freeCodeCamp/Certifications": {
+    "iconName": "BoBxCertification",
+    "iconColor": "#bdaf51"
+  },
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design": {
+    "iconName": "LiLaptop",
+    "iconColor": "#e8bb92"
+  },
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design/HTML": {
+    "iconName": "SiHtml5",
+    "iconColor": "#e34f26"
+  },
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design/HTML/HTML.md": {
+    "iconName": "SiHtml5",
+    "iconColor": "#e34f26"
+  },
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design/CSS": {
+    "iconName": "SiCss3",
+    "iconColor": "#663399"
+  },
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design/CSS/CSS.md": {
+    "iconName": "SiCss3",
+    "iconColor": "#663399"
+  },
+  "Notes/The Odin Project": {
+    "iconName": "SiTheodinproject",
+    "iconColor": "#a9792b"
+  },
+  "Notes/The Odin Project/The Odin Project.md": {
+    "iconName": "SiTheodinproject",
+    "iconColor": "#a9772b"
+  },
+  "Notes/The Odin Project/Foundations Course": "SiGitbook",
+  "Notes/The Odin Project/Foundations Course/Foundations Course.md": "SiGitbook",
+  "Projects": {
+    "iconName": "OcProject16",
+    "iconColor": "#fb50d6"
+  },
+  "Projects/Projects.md": {
+    "iconName": "OcProject16",
+    "iconColor": "#fb50d6"
+  },
+  "Projects/Daily Quote": {
+    "iconName": "BoBxsQuoteLeft",
+    "iconColor": "#ddd5a2"
+  },
+  "Projects/Shopping List": {
+    "iconName": "LiShoppingBasket",
+    "iconColor": "#6ca9f9"
+  },
+  "Projects/Daily Quote/Daily Quote.md": {
+    "iconName": "BoBxsQuoteLeft",
+    "iconColor": "#ddd5a2"
+  },
+  "Projects/Shopping List/Shopping List.md": {
+    "iconName": "LiShoppingBasket",
+    "iconColor": "#6ca5f9"
+  },
+  "Projects/Daily Quote/Backend.md": {
+    "iconName": "LiServer",
+    "iconColor": "#ceb63c"
+  },
+  "Projects/Daily Quote/Canvas.md": {
+    "iconName": "LiPenTool",
+    "iconColor": "#e1609f"
+  },
+  "Projects/Daily Quote/Flows.md": {
+    "iconName": "LiStepBack",
+    "iconColor": "#5ba348"
+  },
+  "Projects/Daily Quote/Frontend.md": {
+    "iconName": "LiCode2",
+    "iconColor": "#2c79dd"
+  },
+  "Projects/Daily Quote/Requirements.md": {
+    "iconName": "LiListCheck",
+    "iconColor": "#c57820"
+  },
+  "Projects/Daily Quote/TODO.md": {
+    "iconName": "OcCheckbox16",
+    "iconColor": "#83a93d"
+  },
+  "Notes/web.dev": {
+    "iconName": "SiWebpack",
+    "iconColor": "#4372fe"
+  },
+  "Notes/web.dev/HTML": {
+    "iconName": "SiHtml5",
+    "iconColor": "#e34f26"
+  },
+  "Notes/web.dev/HTML/content": "BoBxsBookContent",
+  "Notes/web.dev/HTML/HTML.md": {
+    "iconName": "SiHtml5",
+    "iconColor": "#e34f26"
+  },
+  "Notes/web.dev/web.dev.md": {
+    "iconName": "SiWebpack",
+    "iconColor": "#4372fe"
+  },
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design/Responsive Web Design.md": {
+    "iconName": "LiLaptop",
+    "iconColor": "#e8bb92"
+  },
+  "Notes/freeCodeCamp/Certifications/JavaScript": {
+    "iconName": "SiJavascript",
+    "iconColor": "#f0dc50"
+  },
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design/HTML/contents": "BoBxsBookContent",
+  "Notes/freeCodeCamp/Certifications/Responsive Web Design/CSS/contents": "BoBxsBookContent",
+  "Notes/freeCodeCamp/Certifications/JavaScript/content": "BoBxsBookContent",
+  "Notes/freeCodeCamp/Certifications/JavaScript/JavaScript.md": {
+    "iconName": "SiJavascript",
+    "iconColor": "#f0dc50"
+  },
+  "Volunteer": {
+    "iconName": "LiHandHelping",
+    "iconColor": "#b5e82c"
+  },
+  "Volunteer/Volunteer.md": {
+    "iconName": "LiHandHelping",
+    "iconColor": "#b5e82c"
+  },
+  "Notes/web.dev/JavaScript": {
+    "iconName": "SiJavascript",
+    "iconColor": "#f0dc50"
+  },
+  "Notes/web.dev/JavaScript/JavaScript.md": {
+    "iconName": "SiJavascript",
+    "iconColor": "#f0dc50"
+  },
+  "Notes/web.dev/JavaScript/content": "BoBxsBookContent",
+  "Books/Grokking Data Structures": {
+    "iconName": "OcContainer16",
+    "iconColor": "#ff3c3c"
+  },
+  "Books/Grokking Data Structures/Grokking Data Structures.md": {
+    "iconName": "OcContainer16",
+    "iconColor": "#ff3c3c"
+  },
+  "Books/Grokking Data Structures/Chapters": {
+    "iconName": "LiList",
+    "iconColor": "#f13c3c"
+  },
+  "Books/Grokking Data Structures/Code Lab": {
+    "iconName": "LiFlaskConical",
+    "iconColor": "#f03c3c"
+  },
+  "Projects/Daily Quote/Ideas.md": {
+    "iconName": "BoBxsBulb",
+    "iconColor": "#ffec70"
+  },
+  "Projects/Daily Quote/Market Research.md": "FarMoneyBill1",
+  "Projects/Todo Advanced Projects.md": {
+    "iconName": "SiProtodotio",
+    "iconColor": "#fb50d6"
+  },
+  "Projects/Gamer's Companion": {
+    "iconName": "SiRepublicofgamers",
+    "iconColor": "#8867fe"
+  },
+  "Projects/Gamer's Companion/Gamer's Companion.md": {
+    "iconName": "SiRepublicofgamers",
+    "iconColor": "#8867fe"
+  },
+  "Projects/Gamer's Companion/Ideas.md": {
+    "iconName": "BoBxsBulb",
+    "iconColor": "#ffec70"
+  },
+  "Notes/The Odin Project/Foundations Course/2️⃣ Prerequisites/content": "BoBxsBookContent",
+  "Projects/Personal Finance Tracker/Personal Finance Tracker.md": {
+    "iconName": "BoBxMoneyWithdraw",
+    "iconColor": "#88c865"
+  },
+  "Projects/Personal Finance Tracker": {
+    "iconName": "BoBxMoneyWithdraw",
+    "iconColor": "#88c865"
+  }
+}
