@@ -35,7 +35,8 @@
               "title": "README"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -107,7 +108,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 280.5
+    "width": 280.5,
+    "collapsed": true
   },
   "right": {
     "id": "84397ab86dc397ee",
@@ -124,37 +126,17 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Notes/The Odin Project/Foundations Course/5️⃣ CSS Foundations/1️⃣ Intro to CSS.md",
+                "file": "README.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 1️⃣ Intro to CSS"
+              "title": "Outline of README"
             }
           },
           {
-            "id": "12e9628db69a443d",
-            "type": "leaf",
-            "state": {
-              "type": "git-view",
-              "state": {},
-              "icon": "lucide-ghost",
-              "title": "git-view"
-            }
-          },
-          {
-            "id": "f098ec7dc31994a0",
-            "type": "leaf",
-            "state": {
-              "type": "todo",
-              "state": {},
-              "icon": "checkmark",
-              "title": "Todo List"
-            }
-          },
-          {
-            "id": "d29dbe5d0b2a9381",
+            "id": "f58d34575aa3189f",
             "type": "leaf",
             "state": {
               "type": "todo",
@@ -164,7 +146,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       },
       {
         "id": "2b46be47f39cb34b",
@@ -218,7 +200,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 284.5
+    "width": 284.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -235,53 +218,53 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ef88c43ab2ab9b4e",
+  "active": "7021db9384b2985b",
   "lastOpenFiles": [
-    "README.md",
     "TEST-PLAN.md",
-    "Notes/The Odin Project/Foundations Course/5️⃣ CSS Foundations/5️⃣CSS Foundations.md",
-    "Perks.md",
-    "Notes/freeCodeCamp/Certifications/Responsive Web Design/CSS/contents/2️⃣ Basic CSS.md",
-    "Notes/The Odin Project/Foundations Course/5️⃣ CSS Foundations/1️⃣ Intro to CSS.md",
-    "Projects/TODO Projects.md",
-    "Notes/web.dev/JavaScript/JavaScript.md",
-    "Notes/The Odin Project/Foundations Course/Foundations Course.md",
-    "Notes/freeCodeCamp/Certifications/Responsive Web Design/CSS/CSS.md",
-    "Notes/The Odin Project/Foundations Course/2️⃣ Prerequisites/content/1️⃣ Computer Basics.md",
-    "Notes/The Odin Project/Foundations Course/1️⃣ Introduction/1️⃣ Introduction.md",
-    "Notes/The Odin Project/The Odin Project.md",
-    "Projects/Projects.md",
-    "gvkj.md",
-    "Notes/The Odin Project/Foundations Course/5️⃣ CSS Foundations",
-    "Notes/The Odin Project/Foundations Course/4️⃣ HTML Foundations/4️⃣ HTML Foundations.md",
-    "Notes/The Odin Project/Foundations Course/2️⃣ Prerequisites/2️⃣ Prerequisites.md",
-    "Projects/Personal Finance Tracker/Personal Finance Tracker.md",
-    "Projects/Todo Advanced Projects.md",
-    "Projects/Personal Finance Tracker",
-    "Projects/Gamer's Companion/Ideas.md",
-    "Projects/Untitled.md",
-    "Projects/Gamer's Companion/Gamer's Companion.md",
-    "script Fis.md",
-    "perks.html",
-    "Notes/The Odin Project/Foundations Course/4️⃣ HTML Foundations",
-    "Notes/The Odin Project/Foundations Course/2️⃣ Prerequisites/content/7️⃣ Setting up Git.md",
-    "Notes/The Odin Project/Foundations Course/2️⃣ Prerequisites/content/2️⃣How Does the Web Work.md",
-    "Notes/The Odin Project/Foundations Course/2️⃣ Prerequisites/content/3️⃣ Installation Overview.md",
-    "Notes/The Odin Project/Foundations Course/2️⃣ Prerequisites/content",
+    "README.md",
+    "__test__/index.test.js",
+    "__test__",
+    "node_modules/@types/jest/package.json",
+    "node_modules/@types/jest/index.d.ts",
+    "node_modules/@types/jest/LICENSE",
+    "node_modules/@types/jest/README.md",
+    "node_modules/@types/jest",
+    "node_modules/@sinclair/typebox/build/cjs/type/guard/value.d.ts",
+    "node_modules/@sinclair/typebox/build/cjs/type/clone/value.d.ts",
+    "node_modules/@sinclair/typebox/build/cjs/type/intrinsic/uppercase.d.ts",
+    "node_modules/@sinclair/typebox/build/cjs/type/template-literal/union.d.ts",
+    "node_modules/caniuse-lite/README.md",
+    "node_modules/@sinclair/typebox/readme.md",
+    "node_modules/istanbul-reports/lib/html/assets/sort-arrow-sprite.png",
+    "node_modules/istanbul-reports/lib/html-spa/assets/sort-arrow-sprite.png",
+    "node_modules/istanbul-reports/lib/html/assets/favicon.png",
+    "node_modules/istanbul-reports/README.md",
+    "node_modules/istanbul-reports/CHANGELOG.md",
+    "node_modules/glob/README.md",
+    "node_modules/yargs/README.md",
+    "node_modules/js-yaml/README.md",
+    "node_modules/minimatch/README.md",
+    "node_modules/path-scurry/node_modules/lru-cache/README.md",
+    "node_modules/make-dir/node_modules/semver/README.md",
+    "node_modules/jest-snapshot/node_modules/semver/README.md",
+    "node_modules/istanbul-lib-instrument/node_modules/semver/README.md",
+    "node_modules/path-scurry/README.md",
+    "node_modules/jackspeak/README.md",
+    "node_modules/path-scurry/LICENSE.md",
+    "node_modules/jackspeak/LICENSE.md",
+    "node_modules/@sinonjs/commons/README.md",
+    "node_modules/foreground-child/README.md",
+    "node_modules/@jridgewell/trace-mapping/README.md",
+    "node_modules/@bcoe/v8-coverage/README.md",
+    "node_modules/signal-exit/README.md",
+    "node_modules/@bcoe/v8-coverage/LICENSE.md",
+    "node_modules/minipass/README.md",
+    "node_modules/@jest/reporters/assets/jest_logo.png",
     "Projects/Daily Quote/attachments/markmap.svg",
     "Projects/Daily Quote - Copy/attachments/markmap.svg",
-    "Projects/Daily Quote - Copy/attachments",
-    "Projects/Daily Quote - Copy",
-    "Projects/Gamer's Companion",
-    "Projects/Daily Quote/attachments",
-    "Books/Grokking Data Structures/Code Lab",
     "attachments/Pasted image 20260129235737.png",
     "Notes/The Odin Project/Foundations Course/1️⃣ Introduction/attachments/Pasted image 20251201144133.png",
     "Books/Grokking Algorithms/Chapters/attachments/Pasted image 20251031184113.png",
-    "Notes/LinkedIn/Courses/SQL/SQL Essential Training/Contents/attachments/Pasted image 20251021113005.png",
-    "Notes/LinkedIn/Courses/SQL/SQL Essential Training/Contents/attachments/Pasted image 20251018142543.png",
-    "Notes/LinkedIn/Courses/SQL/SQL Essential Training/Contents/attachments/Pasted image 20251016114323.png",
-    "Notes/LinkedIn/Courses/SQL/SQL Essential Training/Contents/attachments/Pasted image 20251016230529.png",
-    "Notes/LinkedIn/Courses/SQL/SQL Essential Training/Contents/attachments/Pasted image 20251016230349.png"
+    "Notes/LinkedIn/Courses/SQL/SQL Essential Training/Contents/attachments/Pasted image 20251021113005.png"
   ]
 }
