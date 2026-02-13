@@ -13,6 +13,12 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+/**
+ * @function ask
+ * @description Prompts the user with a question and returns their input as a promise.
+ * @param {string} question - The question to ask the user.
+ * @returns {Promise<string>} A promise that resolves with the user's input.
+ */
 const ask = (question) => new Promise((resolve) => rl.question(question, resolve));
 
 /**
@@ -20,7 +26,7 @@ const ask = (question) => new Promise((resolve) => rl.question(question, resolve
  * @description Loads account data from the JSON file. If the file doesn't exist, it initializes with empty data. 
  * @returns {void}
  */
-function loadData() {
+export function loadData() {
   if (!fs.existsSync(dataPath)) {
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
     return;
@@ -43,7 +49,7 @@ function loadData() {
  * @description Saves the current account data to the JSON file.
  * @returns {void}
  */
-function saveData() {
+export function saveData() {
   if (saving) return;
   saving = true;
   fs.writeFile(dataPath, JSON.stringify(data, null, 2), (err) => {
@@ -53,6 +59,14 @@ function saveData() {
     }
   });
 }
+
+// ! Exporting dependencies for testing purposes
+export const dependencies = {
+  ask: ask,
+  console: console,
+  saveData: saveData,
+  pause: pause
+};
 
 /**
  * @function renderHeader
@@ -101,7 +115,7 @@ function formatMoney(value) {
  *              It ensures that the generated ID does not already exist in the accounts data.
  * @returns 
  */
-function generateAccountId() {
+export function generateAccountId() {
   let id = '';
   do {
     id = `ACC-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -115,7 +129,7 @@ function generateAccountId() {
  * @description Searches for an account in the data by its ID and returns it. If no account is found, it returns undefined. 
  * @returns {object|undefined} The account object if found, otherwise undefined.
  */
-function findAccountById(id) {
+export function findAccountById(id) {
   return data.accounts.find((account) => account.id === id);
 }
 
@@ -127,6 +141,12 @@ function findAccountById(id) {
 async function pause() {
   await ask(chalk.gray('\nPress Enter to continue...'));
 }
+
+// ! For testing purposes, we need to be able to close the readline interface after all tests are done
+export function closeReadline() {
+  rl.close();
+}
+
 /* 
   ! Errors
   - Invalid Input for balance
@@ -142,13 +162,13 @@ async function pause() {
  * @description Handles the process of creating a new bank account. 
  * @returns {Promise<void>} A promise that resolves when the account creation process is complete.
  */
-async function createAccount() {
+export async function createAccount(deps = dependencies) {
   console.clear();
   renderHeader();
   console.log(chalk.bold('Create New Account'));
 
-  const holderName = await ask('Account holder name: ');
-  const initialDepositInput = await ask('Initial deposit amount: ');
+  const holderName = await deps.ask('Account holder name: ');
+  const initialDepositInput = await deps.ask('Initial deposit amount: ');
   const initialDeposit = parseFloat(initialDepositInput);
 
   const id = generateAccountId();
@@ -171,10 +191,10 @@ async function createAccount() {
   });
 
   data.accounts.push(account);
-  saveData();
+  deps.saveData();
 
   console.log(chalk.green(`Account created successfully. ID: ${id}`));
-  await pause();
+  await deps.pause();
 }
 
 /**
@@ -182,7 +202,7 @@ async function createAccount() {
  * @description Allows the user to view the details of a specific account by entering its ID.
  * @returns {Promise<void>} A promise that resolves when the account details have been displayed and the user has chosen to continue.
  */
-async function viewAccountDetails() {
+export async function viewAccountDetails() {
   console.clear();
   renderHeader();
   console.log(chalk.bold('View Account Details'));
@@ -220,7 +240,7 @@ async function viewAccountDetails() {
  * @description Displays a list of all accounts in a tabular format, showing the account ID, holder name, balance, and status.
  * @returns {Promise<void>} A promise that resolves when the account list has been displayed and the user has chosen to continue.
  */
-async function listAllAccounts() {
+export async function listAllAccounts() {
   console.clear();
   renderHeader();
   console.log(chalk.bold('All Accounts'));
@@ -269,7 +289,7 @@ async function listAllAccounts() {
  * @description Allows the user to deposit funds into an existing account by entering the account ID and the deposit amount. 
  * @returns {Promise<void>} A promise that resolves when the deposit process is complete and the user has chosen to continue.
  */
-async function depositFunds() {
+export async function depositFunds() {
   console.clear();
   renderHeader();
   console.log(chalk.bold('Deposit Funds'));
@@ -315,7 +335,7 @@ async function depositFunds() {
  * @description Allows the user to withdraw funds from an existing account by entering the account ID and the withdrawal amount. 
  * @returns {Promise<void>} A promise that resolves when the withdrawal process is complete and the user has chosen to continue.
  */
-async function withdrawFunds() {
+export async function withdrawFunds() {
   console.clear();
   renderHeader();
   console.log(chalk.bold('Withdraw Funds'));
@@ -363,7 +383,7 @@ async function withdrawFunds() {
  *              destination account ID, and transfer amount.
  * @returns {Promise<void>} A promise that resolves when the transfer process is complete and the user has chosen to continue.
  */
-async function transferFunds() {
+export async function transferFunds() {
   console.clear();
   renderHeader();
   console.log(chalk.bold('Transfer Between Accounts'));
@@ -439,7 +459,7 @@ async function transferFunds() {
  * @description Allows the user to view the transaction history of a specific account by entering its ID.
  * @returns {Promise<void>} A promise that resolves when the transaction history has been displayed and the user has chosen to continue.
  */
-async function viewTransactionHistory() {
+export async function viewTransactionHistory() {
   console.clear();
   renderHeader();
   console.log(chalk.bold('Transaction History'));
@@ -485,7 +505,7 @@ async function viewTransactionHistory() {
  * @description Allows the user to delete an existing account by entering its ID. It removes the account from the data and saves the changes.
  * @returns {Promise<void>} A promise that resolves when the account has been deleted and the user has chosen to continue.
  */
-async function deleteAccount() {
+export async function deleteAccount() {
   console.clear();
   renderHeader();
   console.log(chalk.bold('Delete Account'));
@@ -511,7 +531,7 @@ async function deleteAccount() {
  * @description Handles the process of exiting the application. It saves the current data, closes the readline interface, and exits the process.
  * @returns {Promise<void>} A promise that resolves when the exit process is complete.
  */
-async function exitApp() {
+export async function exitApp() {
   console.log(chalk.cyan('Saving and exiting...'));
   saveData();
   rl.close();
@@ -575,4 +595,16 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-main();
+// 🔧 TESTING ONLY
+export function __setData(mockData) {
+  data = mockData;
+}
+
+export function __getData() {
+  return data;
+}
+
+
+if (process.env.NODE_ENV !== 'test') { // Only run the main function if not in test environment
+  main();
+}

@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "TEST-PLAN.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -35,8 +35,7 @@
               "title": "README"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -141,12 +140,22 @@
             "state": {
               "type": "todo",
               "state": {},
+              "icon": "lucide-ghost",
+              "title": "todo"
+            }
+          },
+          {
+            "id": "d7715f9758ffeb9f",
+            "type": "leaf",
+            "state": {
+              "type": "todo",
+              "state": {},
               "icon": "checkmark",
               "title": "Todo List"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       },
       {
         "id": "2b46be47f39cb34b",
@@ -191,8 +200,8 @@
             "state": {
               "type": "advanced-tables-toolbar",
               "state": {},
-              "icon": "spreadsheet",
-              "title": "Advanced Tables"
+              "icon": "lucide-ghost",
+              "title": "advanced-tables-toolbar"
             }
           }
         ],
@@ -218,21 +227,24 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7021db9384b2985b",
+  "active": "ef88c43ab2ab9b4e",
   "lastOpenFiles": [
-    "TEST-PLAN.md",
+    "src/testBank.js",
+    "src/testank.js",
+    "src/testbank.js",
+    "__test__/jest.config.js",
     "README.md",
-    "__test__/index.test.js",
-    "__test__",
-    "node_modules/@types/jest/package.json",
-    "node_modules/@types/jest/index.d.ts",
-    "node_modules/@types/jest/LICENSE",
+    "TEST-PLAN.md",
+    "coverage/lcov-report/index.js.html",
+    "coverage/lcov-report/sorter.js",
+    "coverage/lcov-report/sort-arrow-sprite.png",
+    "coverage/lcov-report/prettify.js",
+    "coverage/lcov-report/prettify.css",
+    "coverage/lcov-report/index.html",
+    "coverage/lcov-report/favicon.png",
+    "coverage/lcov-report/block-navigation.js",
+    "coverage/lcov-report/base.css",
     "node_modules/@types/jest/README.md",
-    "node_modules/@types/jest",
-    "node_modules/@sinclair/typebox/build/cjs/type/guard/value.d.ts",
-    "node_modules/@sinclair/typebox/build/cjs/type/clone/value.d.ts",
-    "node_modules/@sinclair/typebox/build/cjs/type/intrinsic/uppercase.d.ts",
-    "node_modules/@sinclair/typebox/build/cjs/type/template-literal/union.d.ts",
     "node_modules/caniuse-lite/README.md",
     "node_modules/@sinclair/typebox/readme.md",
     "node_modules/istanbul-reports/lib/html/assets/sort-arrow-sprite.png",
@@ -258,13 +270,10 @@
     "node_modules/@bcoe/v8-coverage/README.md",
     "node_modules/signal-exit/README.md",
     "node_modules/@bcoe/v8-coverage/LICENSE.md",
-    "node_modules/minipass/README.md",
     "node_modules/@jest/reporters/assets/jest_logo.png",
     "Projects/Daily Quote/attachments/markmap.svg",
     "Projects/Daily Quote - Copy/attachments/markmap.svg",
     "attachments/Pasted image 20260129235737.png",
-    "Notes/The Odin Project/Foundations Course/1️⃣ Introduction/attachments/Pasted image 20251201144133.png",
-    "Books/Grokking Algorithms/Chapters/attachments/Pasted image 20251031184113.png",
-    "Notes/LinkedIn/Courses/SQL/SQL Essential Training/Contents/attachments/Pasted image 20251021113005.png"
+    "Notes/The Odin Project/Foundations Course/1️⃣ Introduction/attachments/Pasted image 20251201144133.png"
   ]
 }
