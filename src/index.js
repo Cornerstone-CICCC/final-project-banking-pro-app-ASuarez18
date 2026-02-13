@@ -60,14 +60,6 @@ export function saveData() {
   });
 }
 
-// ! Exporting dependencies for testing purposes
-export const dependencies = {
-  ask: ask,
-  console: console,
-  saveData: saveData,
-  pause: pause
-};
-
 /**
  * @function renderHeader
  * @description Renders the application header in the console.
@@ -142,10 +134,6 @@ async function pause() {
   await ask(chalk.gray('\nPress Enter to continue...'));
 }
 
-// ! For testing purposes, we need to be able to close the readline interface after all tests are done
-export function closeReadline() {
-  rl.close();
-}
 
 /* 
   ! Errors
@@ -595,16 +583,5 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-// 🔧 TESTING ONLY
-export function __setData(mockData) {
-  data = mockData;
-}
 
-export function __getData() {
-  return data;
-}
-
-
-if (process.env.NODE_ENV !== 'test') { // Only run the main function if not in test environment
   main();
-}
