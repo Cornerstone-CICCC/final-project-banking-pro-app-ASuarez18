@@ -129,13 +129,12 @@ async function pause() {
 }
 /* 
   ! Errors
-  - Invalid Input for balance
-    - Accepts strings but sets it as NaN
-    - Accepts Empty values
-    - Account named with spaces (" ")
-  - Accepts values > 0 (Negative Initial Balance)
-  - ~~NOT ERROR (Rounds when more than 2 decimals)~~
-  - Two accounts can have the same  name
+  // - Invalid Input for balance
+    // - Accepts strings but sets it as NaN
+    // - Accepts Empty values
+    // - Account named with spaces (" ")
+  // - Accepts values > 0 (Negative Initial Balance)
+  // - Two accounts can have the same  name
 */
 /**
  * @function createAccount
@@ -148,8 +147,27 @@ async function createAccount() {
   console.log(chalk.bold('Create New Account'));
 
   const holderName = await ask('Account holder name: ');
+  // ? Fix for empty names and names with only spaces
+  if (holderName.trim() === '') {
+    console.log(chalk.red('Account holder name cannot be empty.'));
+    await pause();
+    return;
+  }
+  // ? Fix for duplicate names (Optional, depends on requirements)
+  if (data.accounts.some((account) => account.holderName === holderName.trim())) {
+    console.log(chalk.red('An account with this holder name already exists.'));
+    await pause();
+    return;
+  }
+
   const initialDepositInput = await ask('Initial deposit amount: ');
   const initialDeposit = parseFloat(initialDepositInput);
+  // ? Fix for invalid initial deposit (NaN, negative values)
+  if (isNaN(initialDeposit) || initialDeposit < 0) {
+    console.log(chalk.red('Invalid initial deposit amount. Please enter a non-negative number.'));
+    await pause();
+    return;
+  }
 
   const id = generateAccountId();
   const now = new Date().toISOString();
@@ -259,10 +277,10 @@ async function listAllAccounts() {
 
 /*
   ! Errors
-  - Invalid Input
-    - Accepts empty values so it turns into Nan
-    - Accepts strings
-  - Accepts values >= 0 (Withdrawing when trying to deposit)
+  // - Invalid Input
+  //   - Accepts empty values so it turns into Nan
+  //   - Accepts strings
+  // - Accepts values >= 0 (Withdrawing when trying to deposit)
 */
 /**
  * @function depositFunds
@@ -286,6 +304,13 @@ async function depositFunds() {
   const amountInput = await ask('Deposit amount: ');
   const amount = parseFloat(amountInput);
 
+  // ? Fix for invalid deposit amount (NaN, negative values)
+  if (isNaN(amount) || amount <= 0) {
+    console.log(chalk.red('Invalid deposit amount. Please enter a positive number.'));
+    await pause();
+    return;
+  }
+
   account.balance += amount;
 
   account.transactions.push({
@@ -304,11 +329,11 @@ async function depositFunds() {
 
 /*
   ! Errors
-  - Invalid Input
-    - Accepts empty values so it turns into Nan
-    - Accepts strings
-  - Accepts values > 0 and makes positive balance
-  - You can withdraw more that you have in your account
+  //- Invalid Input
+  //  - Accepts empty values so it turns into Nan
+  //  - Accepts strings
+  //- Accepts values > 0 and makes positive balance
+  //- You can withdraw more that you have in your account
 */
 /**
  * @function withdrawFunds
@@ -332,6 +357,19 @@ async function withdrawFunds() {
   const amountInput = await ask('Withdrawal amount: ');
   const amount = parseFloat(amountInput);
 
+  // ? Fix for invalid withdrawal amount (NaN, negative values)
+  if (isNaN(amount) || amount <= 0) {
+    console.log(chalk.red('Invalid withdrawal amount. Please enter a positive number.'));
+    await pause();
+    return;
+  }
+  // ? Fix for insufficient funds
+  if (amount > account.balance) {
+    console.log(chalk.red('Insufficient funds. Withdrawal amount exceeds current balance.'));
+    await pause();
+    return;
+  }
+
   account.balance -= amount;
 
   account.transactions.push({
@@ -350,11 +388,11 @@ async function withdrawFunds() {
 
 /*
   ! Errors
-  - Can transfer to the same account (sender/receiver)
-  - Can transfer to an account that doesn't exists, it creates a new/empty name (EVEN IF ITS EMPTY)  but with the given id and transfers the money
-  - Accepts negative values but "works as intended"
-  - Accepts 0 value
-  - Can send string amount that breaks both accounts (invalid input)
+  // - Can transfer to the same account (sender/receiver)
+  // - Can transfer to an account that doesn't exists, it creates a new/empty name (EVEN IF ITS EMPTY)  but with the given id and transfers the money
+  // - Accepts negative values but "works as intended"
+  // - Accepts 0 value
+  // - Can send string amount that breaks both accounts (invalid input)
   - Can transfer even if it doesn't  has the necessary funds (making a negative balance) 
 */
 /**
@@ -369,18 +407,42 @@ async function transferFunds() {
   console.log(chalk.bold('Transfer Between Accounts'));
 
   const fromId = await ask('From Account ID: ');
-  const toId = await ask('To Account ID: ');
-  const amountInput = await ask('Transfer amount: ');
-
   const fromAccount = findAccountById(fromId.trim());
-
   if (!fromAccount) {
     console.log(chalk.red('Source account not found.'));
     await pause();
     return;
   }
 
+  const toId = await ask('To Account ID: ');
+  // ? Fix for transferring to the same account
+  if (fromId.trim() === toId.trim()) {
+    console.log(chalk.red('Cannot transfer to the same account.'));
+    await pause();
+    return;
+  }
+  // ? Fix for unexisting destination account
+  if (!findAccountById(toId.trim())) {
+    console.log(chalk.red('Destination account not found. Please create the destination account before transferring.'));
+    await pause();
+    return;
+  }
+
+  const amountInput = await ask('Transfer amount: ');
+  // ? Fix for invalid transfer amount (NaN, negative values, zero)
   const amount = parseFloat(amountInput);
+  if (isNaN(amount) || parseFloat(amount) <= 0) {
+    console.log(chalk.red('Invalid transfer amount. Please enter a positive number.'));
+    await pause();
+    return;
+  }
+  // ? Fix for insufficient funds
+  if (amount > fromAccount.balance) {
+    console.log(chalk.red('Insufficient funds. Transfer amount exceeds current balance.'));
+    await pause();
+    return;
+  }
+
   const timestamp = new Date().toISOString();
 
   fromAccount.balance -= amount;
@@ -413,9 +475,11 @@ async function transferFunds() {
 
     data.accounts.push(toAccount);
   } else {
-    if (!toId.trim().endsWith('7')) {
-      toAccount.balance += amount;
-    }
+    // ? Fix for accounts that end with 7 not receiving the money (Easter Egg)
+    // if (!toId.trim().endsWith('7')) {
+    //   toAccount.balance += amount;
+    // }
+    toAccount.balance += amount;
 
     if (amount <= 500) {
       toAccount.transactions.push({
@@ -478,7 +542,7 @@ async function viewTransactionHistory() {
 
 /*
   ! Errors
-  - Delete account with balance is allowed (Depends of the requirements, can be a problem if we want to keep track of the money)
+  // - Delete account with balance is allowed (Depends of the requirements, can be a problem if we want to keep track of the money)
 */
 /**
  * @function deleteAccount
@@ -491,14 +555,23 @@ async function deleteAccount() {
   console.log(chalk.bold('Delete Account'));
 
   const id = await ask('Account ID: ');
+  
   const index = data.accounts.findIndex((account) => account.id === id.trim());
-
+  
   if (index === -1) {
     console.log(chalk.red('Account not found.'));
     await pause();
     return;
   }
 
+  // ? Fix for deleting account with balance (Optional, depends on requirements)
+  const account = findAccountById(id.trim());
+  if (account.balance > 0) {
+    console.log(chalk.red('Cannot delete account with a positive balance. Please withdraw funds before deleting.'));
+    await pause();
+    return;
+  }
+  
   data.accounts.splice(index, 1);
   saveData();
 
