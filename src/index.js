@@ -15,6 +15,11 @@ const rl = readline.createInterface({
 
 const ask = (question) => new Promise((resolve) => rl.question(question, resolve));
 
+/**
+ * @function loadData
+ * @description Loads account data from the JSON file. If the file doesn't exist, it initializes with empty data. 
+ * @returns {void}
+ */
 function loadData() {
   if (!fs.existsSync(dataPath)) {
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
@@ -33,6 +38,11 @@ function loadData() {
   }
 }
 
+/**
+ * @function saveData
+ * @description Saves the current account data to the JSON file.
+ * @returns {void}
+ */
 function saveData() {
   if (saving) return;
   saving = true;
@@ -44,12 +54,22 @@ function saveData() {
   });
 }
 
+/**
+ * @function renderHeader
+ * @description Renders the application header in the console.
+ * @returns {void}
+ */
 function renderHeader() {
   console.log(chalk.cyan('======================================'));
   console.log(chalk.cyan('=            BANKCLI PRO v1.0        ='));
   console.log(chalk.cyan('======================================'));
 }
 
+/**
+ * @function renderMenu
+ * @description Renders the main menu options for the user to select from.
+ * @returns {void}
+ */
 function renderMenu() {
   console.log('1. Create New Account');
   console.log('2. View Account Details');
@@ -62,6 +82,12 @@ function renderMenu() {
   console.log('9. Exit Application');
 }
 
+/**
+ * @function formatMoney
+ * @param {number} value - The numeric value to format as currency.
+ * @description Formats a number as US currency using the Intl.NumberFormat API.
+ * @returns {string} The formatted currency string.
+ */
 function formatMoney(value) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -69,6 +95,12 @@ function formatMoney(value) {
   }).format(value);
 }
 
+/**
+ * @function generateAccountId
+ * @description Generates a unique account ID in the format "ACC-XXXX" where XXXX is a random 4-digit number. 
+ *              It ensures that the generated ID does not already exist in the accounts data.
+ * @returns 
+ */
 function generateAccountId() {
   let id = '';
   do {
@@ -77,14 +109,39 @@ function generateAccountId() {
   return id;
 }
 
+/**
+ * @function findAccountById
+ * @param {string} id - The account ID to search for.
+ * @description Searches for an account in the data by its ID and returns it. If no account is found, it returns undefined. 
+ * @returns {object|undefined} The account object if found, otherwise undefined.
+ */
 function findAccountById(id) {
   return data.accounts.find((account) => account.id === id);
 }
 
+/**
+ * @function pause
+ * @description Pauses the execution and waits for the user to press Enter before continuing.
+ * @return {Promise<void>} A promise that resolves when the user presses Enter.
+ */
 async function pause() {
   await ask(chalk.gray('\nPress Enter to continue...'));
 }
-
+/* 
+  ! Errors
+  - Invalid Input for balance
+    - Accepts strings but sets it as NaN
+    - Accepts Empty values
+    - Account named with spaces (" ")
+  - Accepts values > 0 (Negative Initial Balance)
+  - ~~NOT ERROR (Rounds when more than 2 decimals)~~
+  - Two accounts can have the same  name
+*/
+/**
+ * @function createAccount
+ * @description Handles the process of creating a new bank account. 
+ * @returns {Promise<void>} A promise that resolves when the account creation process is complete.
+ */
 async function createAccount() {
   console.clear();
   renderHeader();
@@ -120,6 +177,11 @@ async function createAccount() {
   await pause();
 }
 
+/**
+ * @function viewAccountDetails
+ * @description Allows the user to view the details of a specific account by entering its ID.
+ * @returns {Promise<void>} A promise that resolves when the account details have been displayed and the user has chosen to continue.
+ */
 async function viewAccountDetails() {
   console.clear();
   renderHeader();
@@ -153,6 +215,11 @@ async function viewAccountDetails() {
   await pause();
 }
 
+/**
+ * @function listAllAccounts
+ * @description Displays a list of all accounts in a tabular format, showing the account ID, holder name, balance, and status.
+ * @returns {Promise<void>} A promise that resolves when the account list has been displayed and the user has chosen to continue.
+ */
 async function listAllAccounts() {
   console.clear();
   renderHeader();
@@ -190,6 +257,18 @@ async function listAllAccounts() {
   await pause();
 }
 
+/*
+  ! Errors
+  - Invalid Input
+    - Accepts empty values so it turns into Nan
+    - Accepts strings
+  - Accepts values >= 0 (Withdrawing when trying to deposit)
+*/
+/**
+ * @function depositFunds
+ * @description Allows the user to deposit funds into an existing account by entering the account ID and the deposit amount. 
+ * @returns {Promise<void>} A promise that resolves when the deposit process is complete and the user has chosen to continue.
+ */
 async function depositFunds() {
   console.clear();
   renderHeader();
@@ -223,6 +302,19 @@ async function depositFunds() {
   await pause();
 }
 
+/*
+  ! Errors
+  - Invalid Input
+    - Accepts empty values so it turns into Nan
+    - Accepts strings
+  - Accepts values > 0 and makes positive balance
+  - You can withdraw more that you have in your account
+*/
+/**
+ * @function withdrawFunds
+ * @description Allows the user to withdraw funds from an existing account by entering the account ID and the withdrawal amount. 
+ * @returns {Promise<void>} A promise that resolves when the withdrawal process is complete and the user has chosen to continue.
+ */
 async function withdrawFunds() {
   console.clear();
   renderHeader();
@@ -256,6 +348,21 @@ async function withdrawFunds() {
   await pause();
 }
 
+/*
+  ! Errors
+  - Can transfer to the same account (sender/receiver)
+  - Can transfer to an account that doesn't exists, it creates a new/empty name (EVEN IF ITS EMPTY)  but with the given id and transfers the money
+  - Accepts negative values but "works as intended"
+  - Accepts 0 value
+  - Can send string amount that breaks both accounts (invalid input)
+  - Can transfer even if it doesn't  has the necessary funds (making a negative balance) 
+*/
+/**
+ * @function transferFunds
+ * @description Allows the user to transfer funds between two accounts by entering the source account ID, 
+ *              destination account ID, and transfer amount.
+ * @returns {Promise<void>} A promise that resolves when the transfer process is complete and the user has chosen to continue.
+ */
 async function transferFunds() {
   console.clear();
   renderHeader();
@@ -327,6 +434,11 @@ async function transferFunds() {
   await pause();
 }
 
+/**
+ * @function viewTransactionHistory
+ * @description Allows the user to view the transaction history of a specific account by entering its ID.
+ * @returns {Promise<void>} A promise that resolves when the transaction history has been displayed and the user has chosen to continue.
+ */
 async function viewTransactionHistory() {
   console.clear();
   renderHeader();
@@ -364,6 +476,15 @@ async function viewTransactionHistory() {
   await pause();
 }
 
+/*
+  ! Errors
+  - Delete account with balance is allowed (Depends of the requirements, can be a problem if we want to keep track of the money)
+*/
+/**
+ * @function deleteAccount
+ * @description Allows the user to delete an existing account by entering its ID. It removes the account from the data and saves the changes.
+ * @returns {Promise<void>} A promise that resolves when the account has been deleted and the user has chosen to continue.
+ */
 async function deleteAccount() {
   console.clear();
   renderHeader();
@@ -385,6 +506,11 @@ async function deleteAccount() {
   await pause();
 }
 
+/**
+ * @function exitApp
+ * @description Handles the process of exiting the application. It saves the current data, closes the readline interface, and exits the process.
+ * @returns {Promise<void>} A promise that resolves when the exit process is complete.
+ */
 async function exitApp() {
   console.log(chalk.cyan('Saving and exiting...'));
   saveData();
@@ -392,6 +518,12 @@ async function exitApp() {
   process.exit(0);
 }
 
+/**
+ * @function main
+ * @description The main function that initializes the application, loads data, and handles the main menu loop. 
+ *              It continuously renders the menu and processes user input until the user chooses to exit.
+ * @returns {Promise<void>} A promise that resolves when the application is exited.
+ */
 async function main() {
   loadData();
 
