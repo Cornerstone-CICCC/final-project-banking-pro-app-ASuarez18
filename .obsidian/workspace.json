@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "TEST-PLAN.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
@@ -150,12 +150,32 @@
             "state": {
               "type": "todo",
               "state": {},
+              "icon": "lucide-ghost",
+              "title": "todo"
+            }
+          },
+          {
+            "id": "64710786fce229f2",
+            "type": "leaf",
+            "state": {
+              "type": "todo",
+              "state": {},
+              "icon": "checkmark",
+              "title": "Todo List"
+            }
+          },
+          {
+            "id": "a07404855d3e1600",
+            "type": "leaf",
+            "state": {
+              "type": "todo",
+              "state": {},
               "icon": "checkmark",
               "title": "Todo List"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       },
       {
         "id": "2b46be47f39cb34b",
@@ -200,8 +220,8 @@
             "state": {
               "type": "advanced-tables-toolbar",
               "state": {},
-              "icon": "lucide-ghost",
-              "title": "advanced-tables-toolbar"
+              "icon": "spreadsheet",
+              "title": "Advanced Tables"
             }
           }
         ],
@@ -209,8 +229,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 284.5,
-    "collapsed": true
+    "width": 284.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -229,12 +248,13 @@
   },
   "active": "ef88c43ab2ab9b4e",
   "lastOpenFiles": [
+    "src/testBank copy.js",
+    "TEST-PLAN.md",
     "src/testBank.js",
     "src/testank.js",
     "src/testbank.js",
     "__test__/jest.config.js",
     "README.md",
-    "TEST-PLAN.md",
     "coverage/lcov-report/index.js.html",
     "coverage/lcov-report/sorter.js",
     "coverage/lcov-report/sort-arrow-sprite.png",
@@ -243,7 +263,6 @@
     "coverage/lcov-report/index.html",
     "coverage/lcov-report/favicon.png",
     "coverage/lcov-report/block-navigation.js",
-    "coverage/lcov-report/base.css",
     "node_modules/@types/jest/README.md",
     "node_modules/caniuse-lite/README.md",
     "node_modules/@sinclair/typebox/readme.md",

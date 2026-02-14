@@ -1,461 +1,356 @@
-import { describe, test, expect, beforeEach, afterAll, jest } from "@jest/globals";
-
-// ✅ MOCKEAR fs ANTES de importar las funciones
-jest.unstable_mockModule('fs', () => ({
-  default: {
-    existsSync: jest.fn(),
-    readFileSync: jest.fn(),
-    writeFileSync: jest.fn(),
-    writeFile: jest.fn((path, data, callback) => callback(null))
-  },
-  existsSync: jest.fn(),
-  readFileSync: jest.fn(),
-  writeFileSync: jest.fn(),
-  writeFile: jest.fn((path, data, callback) => callback(null))
-}));
-
-// ✅ Importar las funciones DESPUÉS del mock (con await al nivel superior del módulo)
-const { 
+import { jest } from "@jest/globals";
+import {
   createAccount,
   depositFunds,
   withdrawFunds,
   transferFunds,
   deleteAccount,
-  loadData,
-  saveData,
   findAccountById,
   generateAccountId,
-  closeReadline
-} = await import("../src/index.js");
+  formatMoney
+} from "../src/testBank.js";
 
-describe("BankCLI Pro - Integration Tests with Mocks", () => {
+const mockData = {
+  accounts: [{
+    "id": "ACC-1234",
+    "holderName": "user",
+    "balance": 100,
+    "createdAt": "2026-02-13T17:59:49.789Z",
+    "transactions": [
+      {
+        "type": "DEPOSIT",
+        "amount": 100,
+        "timestamp": "2026-02-13T17:59:49.789Z",
+        "balanceAfter": 100,
+        "description": "Initial deposit"
+      }
+    ]
+  }]
+};
 
-  let mockDeps;
+const mockData2 = {
+  accounts: [
+    {
+      "id": "ACC-1234",
+      "holderName": "user",
+      "balance": 100,
+      "createdAt": "2026-02-13T17:59:49.789Z",
+      "transactions": [
+        {
+          "type": "DEPOSIT",
+          "amount": 100,
+          "timestamp": "2026-02-13T17:59:49.789Z",
+          "balanceAfter": 100,
+          "description": "Initial deposit"
+        }
+      ]
+    },
+    {
+      "id": "ACC-1234",
+      "holderName": "user2",
+      "balance": 50,
+      "createdAt": "2026-02-13T17:59:49.789Z",
+      "transactions": [
+        {
+          "type": "DEPOSIT",
+          "amount": 50,
+          "timestamp": "2026-02-13T17:59:49.789Z",
+          "balanceAfter": 50,
+          "description": "Initial deposit"
+        }
+      ]
+    },
+  ]
+};
 
-  beforeEach(async () => {  // ✅ Hacer beforeEach async
-    // Reset data
-    saveData({ accounts: [] });
+describe("BankCLI Pro - Unit Tests", () => {
 
-    // Mock console methods
-    global.console.clear = jest.fn();
-    global.console.log = jest.fn();
+  // beforeEach(() => {
+  //   // Reset data antes de cada test
+  //   saveData({ accounts: [] });
+  // });
 
-    // Create mock dependencies (sin await import aquí)
-    mockDeps = {
-      ask: jest.fn(),
-      console: console,
-      saveData: jest.fn(),
-      pause: jest.fn().mockResolvedValue(undefined)
-    };
-  });
-  
-  afterAll(() => {
-    closeReadline();
-  });
+  // // Cerrar readline después de todos los tests
+  // afterAll(() => {
+  //   if (typeof closeReadline === 'function') {
+  //     closeReadline();
+  //   }
+  // });
 
   describe("1. Create Account Functionality", () => {
-    
-    test("TP-001 - Should NOT reject string input for initial balance (BUG)", async () => {
-      // Arrange
-      mockDeps.ask
-        .mockResolvedValueOnce("TestAccount")
-        .mockResolvedValueOnce("abc");
-      
-      // Act
-      await createAccount(mockDeps);
-      
-      // Assert
-      const data = loadData();
-      console.log("data", data);
-      
-      expect(data.accounts.length).toBe(1);
-      expect(data.accounts[0].holderName).toBe("TestAccount");
-      expect(data.accounts[0].balance).toBeNaN();
-      expect(mockDeps.ask).toHaveBeenCalledTimes(2);
-      expect(mockDeps.saveData).toHaveBeenCalledTimes(1);
+
+    test("CA-001.(1, 2) - Should reject string or empty input for initial balance", () => {
+      // // > Initial deposit input as string
+      // let data = { accounts: [] };
+      // let initialDepositInput = "invalid"; //  "User input"
+      // let nameInput = "TestAccount";
+
+      // let account = createAccount(nameInput, initialDepositInput, data);
+      // data.accounts.push(account);
+
+      // // Assert 
+      // expect(Number.isNaN(data.accounts[0].balance)).toBe(false); // Balance shouldn't be NaN
+      // expect(typeof data.accounts[0].balance).toBe("number"); // Balance should be a number
+      // > Throw error for non-numeric input
+      expect(() => {
+        createAccount(nameInput, "invalid");
+      }).toThrow("Invalid initial deposit amount");
+
+      // > Initial deposit input as empty string
+      // data = { accounts: [] };
+      // initialDepositInput = ""; //  "User input"
+      // account = createAccount(nameInput, initialDepositInput, data);
+      // data.accounts.push(account);
+
+      // // Assert
+      // expect(Number.isNaN(data.accounts[0].balance)).toBe(false);
+      // expect(typeof data.accounts[0].balance).toBe("number");
+
+      // > Throw error for empty string input
+      expect(() => {
+        createAccount(nameInput, "");
+      }).toThrow("Invalid initial deposit amount");
     });
 
-    // test("TP-002 - Should NOT reject empty input for initial balance (BUG)", async () => {
-    //   mockDeps.ask
-    //     .mockResolvedValueOnce("TestAccount")
-    //     .mockResolvedValueOnce("");
-      
-    //   await createAccount(mockDeps);
-      
-    //   const data = loadData();
-    //   expect(data.accounts[0].balance).toBeNaN();
-    //   expect(data.accounts.length).toBe(1);
-    // });
-
-    // test("TP-003 - Should NOT reject spaces-only name (BUG)", async () => {
-    //   mockDeps.ask
-    //     .mockResolvedValueOnce("   ")
-    //     .mockResolvedValueOnce("100");
-      
-    //   await createAccount(mockDeps);
-      
-    //   const data = loadData();
-    //   expect(data.accounts[0].holderName).toBe("   ");
-    //   expect(data.accounts[0].holderName.trim()).toBe("");
-    //   expect(data.accounts.length).toBe(1);
-    // });
-
-    // test("TP-004 - Should NOT reject negative initial balance (BUG)", async () => {
-    //   mockDeps.ask
-    //     .mockResolvedValueOnce("TestAccount")
-    //     .mockResolvedValueOnce("-50");
-      
-    //   await createAccount(mockDeps);
-      
-    //   const data = loadData();
-    //   expect(data.accounts[0].balance).toBe(-50);
-    //   expect(data.accounts[0].balance).toBeLessThan(0);
-    //   expect(data.accounts.length).toBe(1);
-    // });
-
-    // test("TP-005 - Should allow duplicate account names (EXPECTED BEHAVIOR)", async () => {
-    //   mockDeps.ask
-    //     .mockResolvedValueOnce("John")
-    //     .mockResolvedValueOnce("100");
-      
-    //   await createAccount(mockDeps);
-      
-    //   mockDeps.ask
-    //     .mockResolvedValueOnce("John")
-    //     .mockResolvedValueOnce("200");
-      
-    //   await createAccount(mockDeps);
-      
-    //   const data = loadData();
-    //   expect(data.accounts.length).toBe(2);
-    //   expect(data.accounts[0].holderName).toBe("John");
-    //   expect(data.accounts[1].holderName).toBe("John");
-    // });
-
-    // test("Should generate unique account IDs (CORRECT BEHAVIOR)", async () => {
-    //   mockDeps.ask
-    //     .mockResolvedValueOnce("User1")
-    //     .mockResolvedValueOnce("100");
-      
-    //   await createAccount(mockDeps);
-      
-    //   mockDeps.ask
-    //     .mockResolvedValueOnce("User2")
-    //     .mockResolvedValueOnce("200");
-      
-    //   await createAccount(mockDeps);
-      
-    //   const data = loadData();
-    //   expect(data.accounts[0].id).toMatch(/^ACC-\d{4}$/);
-    //   expect(data.accounts[1].id).toMatch(/^ACC-\d{4}$/);
-    //   expect(data.accounts[0].id).not.toBe(data.accounts[1].id);
-    // });
+    test("CA-002 - Should reject spaces-only account name", () => {
+      // > Account name input as spaces only
+      expect(() => {
+        createAccount("   ", "100");
+      }).toThrow("Invalid account holder name")
+    });
   });
 
-  // describe("2. Deposit Funds Functionality", () => {
-    
-  //   beforeEach(() => {
-  //     saveData({
-  //       accounts: [{
-  //         id: "ACC-1001",
-  //         holderName: "TestUser",
-  //         balance: 100,
-  //         createdAt: new Date().toISOString(),
-  //         transactions: []
-  //       }]
-  //     });
-  //   });
+  test("CA-003 - Should reject negative initial balance", () => {
+    let data = { accounts: [] };
+    // Initial deposit input as negative number
+    const initialDepositInput = "-50";
 
-  //   test("TP-006 - Should NOT reject empty deposit (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("");
-      
-  //     await depositFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBeNaN();
-  //   });
+    const initialDeposit = parseFloat(initialDepositInput);
+    const account = createAccount("TestAccount", initialDepositInput); // Valid name but invalid initial deposit
+    data.accounts.push(account);
 
-  //   test("TP-007 - Should NOT reject string deposit (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("abc");
-      
-  //     await depositFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBeNaN();
-  //   });
+    // Assert
+    expect(account.balance).toBeGreaterThan(0);
 
-  //   test("TP-008 - Should NOT allow negative deposit (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("-50");
-      
-  //     await depositFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBe(50);
-  //   });
+    // > Throw error for negative initial deposit
+    expect(() => {
+      createAccount("TestAccount", "-50");
+    }).toThrow("Invalid initial deposit amount");
+  });
 
-  //   test("TP-009 - Should NOT allow zero deposit (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("0");
-      
-  //     await depositFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBe(100);
-  //     expect(account.transactions.length).toBe(1);
-  //   });
-  // });
+  test("CA-004 - Should generate unique account names", () => { // TODO: Fix for not allowing duplicate IDs
+    const data = { accounts: [] };
+    const account1 = createAccount("Account1", "100", data);
+    data.accounts.push(account1);
+    // > Throw error for duplicate account name
+    expect(() => {
+      createAccount("Account1", "100", data);
+    }).toThrow("Account holder name already exists");
 
-  // describe("3. Withdraw Funds Functionality", () => {
-    
-  //   beforeEach(() => {
-  //     saveData({
-  //       accounts: [{
-  //         id: "ACC-1001",
-  //         holderName: "TestUser",
-  //         balance: 100,
-  //         createdAt: new Date().toISOString(),
-  //         transactions: []
-  //       }]
-  //     });
-  //   });
+  });
 
-  //   test("TP-010 - Should NOT reject empty withdrawal (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("");
-      
-  //     await withdrawFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBeNaN();
-  //   });
+  describe("2. Deposit Funds Functionality", () => {
 
-  //   test("TP-011 - Should NOT reject string withdrawal (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("abc");
-      
-  //     await withdrawFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBeNaN();
-  //   });
+    test("DF-001.(1, 2) - Should reject non-numeric deposit amounts", () => {
+      let data = mockData;
 
-  //   test("TP-012 - Should NOT allow negative withdrawal (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("-30");
-      
-  //     await withdrawFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBe(130);
-  //   });
+      // > Attempt to deposit an empty string
+      expect(() => {
+        depositFunds("ACC-1234", "", data);
+      }).toThrow("Invalid deposit amount");
+      // > Attempt to deposit a non-numeric amount
+      expect(() => {
+        depositFunds("ACC-1234", "invalid", data);
+      }).toThrow("Invalid deposit amount");
+    });
 
-  //   test("TP-013 - Should NOT allow overdraft (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("200");
-      
-  //     await withdrawFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBe(-100);
-  //     expect(account.balance).toBeLessThan(0);
-  //   });
-  // });
+    test("DF-001.(1, 2) - Should reject less or equal 0 deposits", () => {
+      let data = mockData;
+      // > Attempt to deposit a negative amount
+      expect(() => {
+        depositFunds("ACC-1234", "-50", data);
+      }).toThrow("Deposit amount must be greater than zero");
+      // > Attempt to deposit a 0 amount
+      expect(() => {
+        depositFunds("ACC-1234", "0", data);
+      }).toThrow("Deposit amount must be greater than zero");
+    });
+  });
 
-  // describe("4. Transfer Funds Functionality", () => {
-    
-  //   beforeEach(() => {
-  //     saveData({
-  //       accounts: [
-  //         {
-  //           id: "ACC-1001",
-  //           holderName: "User1",
-  //           balance: 100,
-  //           createdAt: new Date().toISOString(),
-  //           transactions: []
-  //         },
-  //         {
-  //           id: "ACC-1007",
-  //           holderName: "User2",
-  //           balance: 100,
-  //           createdAt: new Date().toISOString(),
-  //           transactions: []
-  //         }
-  //       ]
-  //     });
-  //   });
+  describe("3. Withdraw Funds Functionality", () => {
+    test("WF-001.(1, 2) - Should reject non-numeric withdrawal amounts", () => {
+      let data = mockData;
 
-  //   test("TP-015 - Should NOT allow self-transfer (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("50");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account.balance).toBe(50);
-  //   });
+      // > Attempt to withdraw an empty string
+      expect(() => {
+        withdrawFunds("ACC-1234", "", data);
+      }).toThrow("Invalid withdrawal amount");
+      // > Attempt to withdraw a non-numeric amount
+      expect(() => {
+        withdrawFunds("ACC-1234", "invalid", data);
+      }).toThrow("Invalid withdrawal amount");
+    });
 
-  //   test("TP-016 - Should NOT allow transfer to non-existent account (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-9999")
-  //       .mockResolvedValueOnce("100");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const data = loadData();
-  //     expect(data.accounts.length).toBe(3);
-  //     const ghostAccount = findAccountById("ACC-9999");
-  //     expect(ghostAccount).toBeDefined();
-  //     expect(ghostAccount.holderName).toBe('');
-  //   });
+    test("WF-002.(1, 2) - Should reject less or equal 0 withdrawals", () => {
+      let data = mockData;
+      // > Attempt to withdraw a negative amount
+      expect(() => {
+        withdrawFunds("ACC-1234", "-50", data);
+      }).toThrow("Withdrawal amount must be greater than zero");
+      // > Attempt to withdraw a 0 amount
+      expect(() => {
+        withdrawFunds("ACC-1234", "0", data);
+      }).toThrow("Withdrawal amount must be greater than zero");
+    });
 
-  //   test("TP-017 - Should NOT allow empty destination ID (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("")
-  //       .mockResolvedValueOnce("50");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const data = loadData();
-  //     const invalidAccount = data.accounts.find(a => a.id === '');
-  //     expect(invalidAccount).toBeDefined();
-  //   });
+    test("WF-003 - Should reject withdrawals that exceed current balance", () => {
+      let data = mockData;
+      // > Attempt to withdraw more than the current balance
+      expect(() => {
+        withdrawFunds("ACC-1234", "150", data);
+      }).toThrow("Insufficient funds for this withdrawal");
+    });
+  });
 
-  //   test("TP-018 - Should NOT allow negative transfer (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-1007")
-  //       .mockResolvedValueOnce("-50");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const from = findAccountById("ACC-1001");
-  //     const to = findAccountById("ACC-1007");
-  //     expect(from.balance).toBe(150);
-  //     expect(to.balance).toBe(50);
-  //   });
+  describe("4. Transfer Funds Functionality", () => {
+    test("TF-001 - Should reject transfers to the same account", () => {
+      let data = mockData2;
+      // > Attempt to transfer funds to the same account
+      expect(() => {
+        transferFunds("ACC-1234", "ACC-1234", "50", data);
+      }).toThrow("Cannot transfer funds to the same account");
+    });
 
-  //   test("TP-019 - Should NOT allow zero transfer (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-1007")
-  //       .mockResolvedValueOnce("0");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const from = findAccountById("ACC-1001");
-  //     expect(from.balance).toBe(100);
-  //     expect(from.transactions.length).toBe(1);
-  //   });
+    test("TF-002.(1, 2) - Should reject transfer to non-existing accounts", () => {
+      let data = mockData2;
+      // > Attempt to transfer funds to a non-existing account
+      expect(() => {
+        transferFunds("ACC-1234", "ACC-9999", "50", data);
+      }).toThrow("Destination account not found");
+    });
 
-  //   test("TP-020 - Should NOT accept string amount (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-1007")
-  //       .mockResolvedValueOnce("abc");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const from = findAccountById("ACC-1001");
-  //     const to = findAccountById("ACC-1007");
-  //     expect(from.balance).toBeNaN();
-  //     expect(to.balance).toBeNaN();
-  //   });
+    test("TF-003 - Should reject non-numeric transfer amounts", () => {
+      let data = mockData2;
+      // > Attempt to transfer a non-numeric amount
+      expect(() => {
+        transferFunds("ACC-1234", "ACC-5678", "invalid", data);
+      }).toThrow("Invalid transfer amount");
+      // > Attempt to transfer an empty string
+      expect(() => {
+        transferFunds("ACC-1234", "ACC-5678", "", data);
+      }).toThrow("Invalid transfer amount");
+    });
 
-  //   test("TP-021 - Should NOT allow overdraft transfer (BUG)", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-1007")
-  //       .mockResolvedValueOnce("200");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const from = findAccountById("ACC-1001");
-  //     expect(from.balance).toBe(-100);
-  //   });
+    test("TF-004 - Should reject less or equal 0 transfer amounts", () => {
+      let data = mockData2;
+      // > Attempt to transfer a negative amount
+      expect(() => {
+        transferFunds("ACC-1234", "ACC-5678", "-50", data);
+      }).toThrow("Transfer amount must be greater than zero");
+      // > Attempt to transfer a 0 amount
+      expect(() => {
+        transferFunds("ACC-1234", "ACC-5678", "0", data);
+      }).toThrow("Transfer amount must be greater than zero");
+    });
 
-  //   test("TP-022 - BUG: Money vanishes when transferring to account ending in 7", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-1007")
-  //       .mockResolvedValueOnce("100");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const from = findAccountById("ACC-1001");
-  //     const to = findAccountById("ACC-1007");
-  //     expect(from.balance).toBe(0);
-  //     expect(to.balance).toBe(100);
-  //   });
+    test("TF-005 - Should reject transfers that exceed current balance", () => {
+      let data = mockData2;
+      // > Attempt to transfer more than the current balance
+      expect(() => {
+        transferFunds("ACC-1234", "ACC-5678", "150", data);
+      }).toThrow("Insufficient funds for this transfer");
+    });
 
-  //   test("TP-023 - BUG: Transaction not recorded when amount > 500", async () => {
-  //     mockDeps.ask
-  //       .mockResolvedValueOnce("ACC-1001")
-  //       .mockResolvedValueOnce("ACC-1007")
-  //       .mockResolvedValueOnce("600");
-      
-  //     await transferFunds(mockDeps);
-      
-  //     const to = findAccountById("ACC-1007");
-  //     expect(to.balance).toBe(700);
-  //     expect(to.transactions.length).toBe(0);
-  //   });
-  // });
+    test("TF-006 - Should correctly transfer funds between accounts", () => { // Accounts ending in 7
+      let data = mockData2;
+      // > Valid transfer between accounts
+      const result = transferFunds("ACC-1234", "ACC-5678", "50", data);
+      expect(result.accounts.find(acc => acc.id === "ACC-1234").balance).toBe(50); // Source account should be deducted
+      expect(result.accounts.find(acc => acc.id === "ACC-5678").balance).toBe(100); // Destination account should be credited
+    });
 
-  // describe("5. Delete Account Functionality", () => {
-    
-  //   beforeEach(() => {
-  //     saveData({
-  //       accounts: [{
-  //         id: "ACC-1001",
-  //         holderName: "User1",
-  //         balance: 500,
-  //         createdAt: new Date().toISOString(),
-  //         transactions: [{
-  //           type: 'DEPOSIT',
-  //           amount: 500,
-  //           timestamp: new Date().toISOString(),
-  //           balanceAfter: 500,
-  //           description: 'Initial deposit'
-  //         }]
-  //       }]
-  //     });
-  //   });
+    test("TF-007 - Should record transactions in both accounts for transfers over $500", () => {
+      let data = mockData2;
+      // > Valid transfer over $500 between accounts
+      const result = transferFunds("ACC-1234", "ACC-5678", "600", data);
+      const fromAccount = result.accounts.find(acc => acc.id === "ACC-1234");
+      const toAccount = result.accounts.find(acc => acc.id === "ACC-5678");
 
-  //   test("TP-024 - Should NOT allow deletion with balance (BUG)", async () => {
-  //     mockDeps.ask.mockResolvedValueOnce("ACC-1001");
-      
-  //     await deleteAccount(mockDeps);
-      
-  //     const data = loadData();
-  //     expect(data.accounts.length).toBe(0);
-  //     expect(findAccountById("ACC-1001")).toBeUndefined();
-  //   });
+      expect(fromAccount.transactions.some(tx => tx.type === "TRANSFER" && tx.amount === 600)).toBe(true);
+      expect(toAccount.transactions.some(tx => tx.type === "TRANSFER" && tx.amount === 600)).toBe(true);
+    });
+  });
 
-  //   test("TP-029 - Transaction history lost after deletion (BUG)", async () => {
-  //     const accountBefore = findAccountById("ACC-1001");
-  //     expect(accountBefore.transactions.length).toBe(1);
-      
-  //     mockDeps.ask.mockResolvedValueOnce("ACC-1001");
-      
-  //     await deleteAccount(mockDeps);
-      
-  //     const account = findAccountById("ACC-1001");
-  //     expect(account).toBeUndefined();
-  //   });
-  // });
+  describe("5. Delete Account Functionality", () => {
+    test("DA-001 - Should prevent deletion of accounts with balance", () => {
+      let data = mockData;
+      // > Attempt to delete an account with a balance
+      expect(() => {
+        deleteAccount("ACC-1234", data);
+      }).toThrow("Cannot delete account with remaining balance");
+    });
+  });
+
+  describe("6. Format Money Functionality", () => {
+    test("FM-001 - Should format positive numbers as US currency", () => {
+      // > Format a positive number
+      const result = formatMoney(100);
+      expect(result).toBe("$100.00");
+    });
+
+    test("FM-002 - Should handle NaN input gracefully", () => {
+      // > Attempt to format NaN
+      expect(() => {
+        formatMoney(NaN);
+      }).toThrow("Can't format an invalid number");
+    });
+  });
+
+  describe("7. Generate Account ID Functionality", () => {
+    test("GA-001 - Should generate account ID in correct format", () => {
+      // > Generate an account ID
+      const id = generateAccountId();
+      expect(id).toMatch(/^ACC-\d{4}$/); // Matches "ACC-" followed by 4 digits
+    });
+
+    test("GA-002 - Should generate unique account IDs", () => {
+      let data = mockData2;
+      const generatedIds = new Set();
+      // > Generate multiple account IDs and check for uniqueness
+      for (let i = 0; i < 100; i++) {
+        const id = generateAccountId(data);
+        expect(generatedIds.has(id)).toBe(false); //
+        generatedIds.add(id);
+        data.accounts.push({ id: id, holderName: `Test${i}`, balance: 0, createdAt: new Date().toISOString(), transactions: [] });
+      }
+    });
+  });
+
+  describe("8. Find Account By ID Functionality", () => {
+    test("FA-001 - Should find existing account by ID", () => {
+      let data = mockData;
+      // > Find an existing account by ID
+      const account = findAccountById("ACC-1234", data);
+      expect(account).toBeDefined();
+      expect(account.id).toBe("ACC-1234");
+    });
+
+    test("FA-002 - Should return undefined for non-existing or empty ID", () => {
+      let data = mockData;
+      // > Attempt to find an account with an empty string ID
+      const resultEmpty = findAccountById("", data);
+      expect(resultEmpty).toBeUndefined();
+
+      // > Attempt to find an account with a non-existing ID
+      const resultNonExisting = findAccountById("ACC-9999", data);
+      expect(resultNonExisting).toBeUndefined();
+    });
+
+    test("FA-003 - Should return undefined for ID with trailing space", () => {
+      let data = mockData;
+      // > Attempt to find an account with a trailing space in the ID
+      const result = findAccountById("ACC-1234 ", data);
+      expect(result).toBeUndefined();
+    });
+  });
 });
