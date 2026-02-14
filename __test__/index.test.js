@@ -1,4 +1,3 @@
-import { jest } from "@jest/globals";
 import {
   createAccount,
   depositFunds,
@@ -8,7 +7,7 @@ import {
   findAccountById,
   generateAccountId,
   formatMoney
-} from "../src/testBank.js";
+} from "../src/testBank-fixed.js";
 
 const mockData = {
   accounts: [{
@@ -33,29 +32,29 @@ const mockData2 = {
     {
       "id": "ACC-1234",
       "holderName": "user",
-      "balance": 100,
+      "balance": 2000,
       "createdAt": "2026-02-13T17:59:49.789Z",
       "transactions": [
         {
           "type": "DEPOSIT",
-          "amount": 100,
+          "amount": 2000,
           "timestamp": "2026-02-13T17:59:49.789Z",
-          "balanceAfter": 100,
+          "balanceAfter": 2000,
           "description": "Initial deposit"
         }
       ]
     },
     {
-      "id": "ACC-1234",
+      "id": "ACC-5678",
       "holderName": "user2",
-      "balance": 50,
+      "balance": 1000,
       "createdAt": "2026-02-13T17:59:49.789Z",
       "transactions": [
         {
           "type": "DEPOSIT",
-          "amount": 50,
+          "amount": 1000,
           "timestamp": "2026-02-13T17:59:49.789Z",
-          "balanceAfter": 50,
+          "balanceAfter": 1000,
           "description": "Initial deposit"
         }
       ]
@@ -65,87 +64,43 @@ const mockData2 = {
 
 describe("BankCLI Pro - Unit Tests", () => {
 
-  // beforeEach(() => {
-  //   // Reset data antes de cada test
-  //   saveData({ accounts: [] });
-  // });
-
-  // // Cerrar readline después de todos los tests
-  // afterAll(() => {
-  //   if (typeof closeReadline === 'function') {
-  //     closeReadline();
-  //   }
-  // });
-
   describe("1. Create Account Functionality", () => {
 
     test("CA-001.(1, 2) - Should reject string or empty input for initial balance", () => {
-      // // > Initial deposit input as string
-      // let data = { accounts: [] };
-      // let initialDepositInput = "invalid"; //  "User input"
-      // let nameInput = "TestAccount";
-
-      // let account = createAccount(nameInput, initialDepositInput, data);
-      // data.accounts.push(account);
-
-      // // Assert 
-      // expect(Number.isNaN(data.accounts[0].balance)).toBe(false); // Balance shouldn't be NaN
-      // expect(typeof data.accounts[0].balance).toBe("number"); // Balance should be a number
       // > Throw error for non-numeric input
       expect(() => {
-        createAccount(nameInput, "invalid");
-      }).toThrow("Invalid initial deposit amount");
-
-      // > Initial deposit input as empty string
-      // data = { accounts: [] };
-      // initialDepositInput = ""; //  "User input"
-      // account = createAccount(nameInput, initialDepositInput, data);
-      // data.accounts.push(account);
-
-      // // Assert
-      // expect(Number.isNaN(data.accounts[0].balance)).toBe(false);
-      // expect(typeof data.accounts[0].balance).toBe("number");
+        createAccount("AccountName", "invalid");
+      }).toThrow("Initial deposit must be a non-negative number");
 
       // > Throw error for empty string input
       expect(() => {
-        createAccount(nameInput, "");
-      }).toThrow("Invalid initial deposit amount");
+        createAccount("AccountName", "");
+      }).toThrow("Initial deposit must be a non-negative number");
     });
 
     test("CA-002 - Should reject spaces-only account name", () => {
       // > Account name input as spaces only
       expect(() => {
         createAccount("   ", "100");
-      }).toThrow("Invalid account holder name")
+      }).toThrow("Account holder name cannot be empty")
     });
   });
 
   test("CA-003 - Should reject negative initial balance", () => {
-    let data = { accounts: [] };
-    // Initial deposit input as negative number
-    const initialDepositInput = "-50";
-
-    const initialDeposit = parseFloat(initialDepositInput);
-    const account = createAccount("TestAccount", initialDepositInput); // Valid name but invalid initial deposit
-    data.accounts.push(account);
-
-    // Assert
-    expect(account.balance).toBeGreaterThan(0);
-
     // > Throw error for negative initial deposit
     expect(() => {
-      createAccount("TestAccount", "-50");
-    }).toThrow("Invalid initial deposit amount");
+      createAccount("TestAccount", "-50", mockData);
+    }).toThrow("Initial deposit must be a non-negative number");
   });
 
-  test("CA-004 - Should generate unique account names", () => { // TODO: Fix for not allowing duplicate IDs
+  test("CA-004 - Should generate unique account names", () => {
     const data = { accounts: [] };
     const account1 = createAccount("Account1", "100", data);
     data.accounts.push(account1);
     // > Throw error for duplicate account name
     expect(() => {
       createAccount("Account1", "100", data);
-    }).toThrow("Account holder name already exists");
+    }).toThrow("An account with this name already exists");
 
   });
 
@@ -157,11 +112,11 @@ describe("BankCLI Pro - Unit Tests", () => {
       // > Attempt to deposit an empty string
       expect(() => {
         depositFunds("ACC-1234", "", data);
-      }).toThrow("Invalid deposit amount");
+      }).toThrow("Deposit amount must be a non-negative number");
       // > Attempt to deposit a non-numeric amount
       expect(() => {
         depositFunds("ACC-1234", "invalid", data);
-      }).toThrow("Invalid deposit amount");
+      }).toThrow("Deposit amount must be a non-negative number");
     });
 
     test("DF-001.(1, 2) - Should reject less or equal 0 deposits", () => {
@@ -169,7 +124,7 @@ describe("BankCLI Pro - Unit Tests", () => {
       // > Attempt to deposit a negative amount
       expect(() => {
         depositFunds("ACC-1234", "-50", data);
-      }).toThrow("Deposit amount must be greater than zero");
+      }).toThrow("Deposit amount must be a non-negative number");
       // > Attempt to deposit a 0 amount
       expect(() => {
         depositFunds("ACC-1234", "0", data);
@@ -184,11 +139,11 @@ describe("BankCLI Pro - Unit Tests", () => {
       // > Attempt to withdraw an empty string
       expect(() => {
         withdrawFunds("ACC-1234", "", data);
-      }).toThrow("Invalid withdrawal amount");
+      }).toThrow("Withdrawal amount must be a non-negative number");
       // > Attempt to withdraw a non-numeric amount
       expect(() => {
         withdrawFunds("ACC-1234", "invalid", data);
-      }).toThrow("Invalid withdrawal amount");
+      }).toThrow("Withdrawal amount must be a non-negative number");
     });
 
     test("WF-002.(1, 2) - Should reject less or equal 0 withdrawals", () => {
@@ -196,7 +151,7 @@ describe("BankCLI Pro - Unit Tests", () => {
       // > Attempt to withdraw a negative amount
       expect(() => {
         withdrawFunds("ACC-1234", "-50", data);
-      }).toThrow("Withdrawal amount must be greater than zero");
+      }).toThrow("Withdrawal amount must be a non-negative number");
       // > Attempt to withdraw a 0 amount
       expect(() => {
         withdrawFunds("ACC-1234", "0", data);
@@ -225,7 +180,7 @@ describe("BankCLI Pro - Unit Tests", () => {
       let data = mockData2;
       // > Attempt to transfer funds to a non-existing account
       expect(() => {
-        transferFunds("ACC-1234", "ACC-9999", "50", data);
+        transferFunds("ACC-1234", "ACC-0000", "50", data);
       }).toThrow("Destination account not found");
     });
 
@@ -234,11 +189,11 @@ describe("BankCLI Pro - Unit Tests", () => {
       // > Attempt to transfer a non-numeric amount
       expect(() => {
         transferFunds("ACC-1234", "ACC-5678", "invalid", data);
-      }).toThrow("Invalid transfer amount");
+      }).toThrow("Transfer amount must be a positive number");
       // > Attempt to transfer an empty string
       expect(() => {
         transferFunds("ACC-1234", "ACC-5678", "", data);
-      }).toThrow("Invalid transfer amount");
+      }).toThrow("Transfer amount must be a positive number");
     });
 
     test("TF-004 - Should reject less or equal 0 transfer amounts", () => {
@@ -246,27 +201,44 @@ describe("BankCLI Pro - Unit Tests", () => {
       // > Attempt to transfer a negative amount
       expect(() => {
         transferFunds("ACC-1234", "ACC-5678", "-50", data);
-      }).toThrow("Transfer amount must be greater than zero");
+      }).toThrow("Transfer amount must be a positive number");
       // > Attempt to transfer a 0 amount
       expect(() => {
         transferFunds("ACC-1234", "ACC-5678", "0", data);
-      }).toThrow("Transfer amount must be greater than zero");
+      }).toThrow("Transfer amount must be a positive number");
     });
 
     test("TF-005 - Should reject transfers that exceed current balance", () => {
       let data = mockData2;
       // > Attempt to transfer more than the current balance
       expect(() => {
-        transferFunds("ACC-1234", "ACC-5678", "150", data);
+        transferFunds("ACC-1234", "ACC-5678", "3000", data);
       }).toThrow("Insufficient funds for this transfer");
     });
 
     test("TF-006 - Should correctly transfer funds between accounts", () => { // Accounts ending in 7
-      let data = mockData2;
+      let data = {
+      accounts: [
+        {
+          id: "ACC-1234",
+          holderName: "user",
+          balance: 1000,
+          createdAt: "2026-02-13T17:59:49.789Z",
+          transactions: []
+        },
+        {
+          id: "ACC-5678",
+          holderName: "user2",
+          balance: 5000,
+          createdAt: "2026-02-13T17:59:49.789Z",
+          transactions: []
+        }
+      ]
+    };
       // > Valid transfer between accounts
       const result = transferFunds("ACC-1234", "ACC-5678", "50", data);
-      expect(result.accounts.find(acc => acc.id === "ACC-1234").balance).toBe(50); // Source account should be deducted
-      expect(result.accounts.find(acc => acc.id === "ACC-5678").balance).toBe(100); // Destination account should be credited
+      expect(result.accounts.find(acc => acc.id === "ACC-1234").balance).toBe(950); // Source account should be deducted
+      expect(result.accounts.find(acc => acc.id === "ACC-5678").balance).toBe(5050); // Destination account should be credited
     });
 
     test("TF-007 - Should record transactions in both accounts for transfers over $500", () => {
@@ -276,8 +248,8 @@ describe("BankCLI Pro - Unit Tests", () => {
       const fromAccount = result.accounts.find(acc => acc.id === "ACC-1234");
       const toAccount = result.accounts.find(acc => acc.id === "ACC-5678");
 
-      expect(fromAccount.transactions.some(tx => tx.type === "TRANSFER" && tx.amount === 600)).toBe(true);
-      expect(toAccount.transactions.some(tx => tx.type === "TRANSFER" && tx.amount === 600)).toBe(true);
+      expect(fromAccount.transactions.some(tx => tx.type === "TRANSFER_OUT" && tx.amount === 600)).toBe(true);
+      expect(toAccount.transactions.some(tx => tx.type === "TRANSFER_IN" && tx.amount === 600)).toBe(true);
     });
   });
 
@@ -287,7 +259,7 @@ describe("BankCLI Pro - Unit Tests", () => {
       // > Attempt to delete an account with a balance
       expect(() => {
         deleteAccount("ACC-1234", data);
-      }).toThrow("Cannot delete account with remaining balance");
+      }).toThrow("Cannot delete an account with a positive balance");
     });
   });
 
@@ -300,9 +272,7 @@ describe("BankCLI Pro - Unit Tests", () => {
 
     test("FM-002 - Should handle NaN input gracefully", () => {
       // > Attempt to format NaN
-      expect(() => {
-        formatMoney(NaN);
-      }).toThrow("Can't format an invalid number");
+      expect(formatMoney(NaN)).toBe("$0.00");
     });
   });
 

@@ -1,0 +1,629 @@
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+const chalk = require('chalk');
+const Table = require('cli-table3');
+
+const dataPath = path.resolve(process.cwd(), 'bank-data.json');
+let data = { accounts: [] };
+let saving = false;
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const ask = (question) => new Promise((resolve) => rl.question(question, resolve));
+
+/**
+ * @function loadData
+ * @description Loads account data from the JSON file. If the file doesn't exist, it initializes with empty data. 
+ * @returns {void}
+ */
+function loadData() {
+  if (!fs.existsSync(dataPath)) {
+    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+    return;
+  }
+
+  try {
+    const raw = fs.readFileSync(dataPath, 'utf8');
+    data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.accounts)) {
+      data = { accounts: [] };
+    }
+  } catch (error) {
+    console.log(chalk.yellow('Warning: Data file corrupted. Starting with empty data.'));
+    data = { accounts: [] };
+  }
+}
+
+/**
+ * @function saveData
+ * @description Saves the current account data to the JSON file.
+ * @returns {void}
+ */
+function saveData() {
+  if (saving) return;
+  saving = true;
+  fs.writeFile(dataPath, JSON.stringify(data, null, 2), (err) => {
+    saving = false;
+    if (err) {
+      console.log(chalk.red('Failed to save data.'));
+    }
+  });
+}
+
+/**
+ * @function renderHeader
+ * @description Renders the application header in the console.
+ * @returns {void}
+ */
+function renderHeader() {
+  console.log(chalk.cyan('======================================'));
+  console.log(chalk.cyan('=            BANKCLI PRO v1.0        ='));
+  console.log(chalk.cyan('======================================'));
+}
+
+/**
+ * @function renderMenu
+ * @description Renders the main menu options for the user to select from.
+ * @returns {void}
+ */
+function renderMenu() {
+  console.log('1. Create New Account');
+  console.log('2. View Account Details');
+  console.log('3. List All Accounts');
+  console.log('4. Deposit Funds');
+  console.log('5. Withdraw Funds');
+  console.log('6. Transfer Between Accounts');
+  console.log('7. View Transaction History');
+  console.log('8. Delete Account');
+  console.log('9. Exit Application');
+}
+
+/**
+ * @function formatMoney
+ * @param {number} value - The numeric value to format as currency.
+ * @description Formats a number as US currency using the Intl.NumberFormat API.
+ * @returns {string} The formatted currency string.
+ */
+function formatMoney(value) {
+  // ? Fix for NaN values (Optional, depends on requirements)
+  if (parseFloat(value) !== value || isNaN(value)) {
+    return '$0.00';
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(value);
+}
+
+/**
+ * @function generateAccountId
+ * @description Generates a unique account ID in the format "ACC-XXXX" where XXXX is a random 4-digit number. 
+ *              It ensures that the generated ID does not already exist in the accounts data.
+ * @returns 
+ */
+function generateAccountId() {
+  let id = '';
+  do {
+    id = `ACC-${Math.floor(1000 + Math.random() * 9000)}`;
+  } while (data.accounts.some((account) => account.id === id));
+  return id;
+}
+
+/**
+ * @function findAccountById
+ * @param {string} id - The account ID to search for.
+ * @description Searches for an account in the data by its ID and returns it. If no account is found, it returns undefined. 
+ * @returns {object|undefined} The account object if found, otherwise undefined.
+ */
+function findAccountById(id) {
+  // ? Fix for IDs with extra spaces (Optional, depends on requirements)
+  return data.accounts.find((account) => account.id.trim() === id);
+}
+
+/**
+ * @function pause
+ * @description Pauses the execution and waits for the user to press Enter before continuing.
+ * @return {Promise<void>} A promise that resolves when the user presses Enter.
+ */
+async function pause() {
+  await ask(chalk.gray('\nPress Enter to continue...'));
+}
+
+/**
+ * @function createAccount
+ * @description Handles the process of creating a new bank account. 
+ * @returns {Promise<void>} A promise that resolves when the account creation process is complete.
+ */
+async function createAccount() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('Create New Account'));
+
+  const holderName = await ask('Account holder name: ');
+  // ? Fix for empty names and names with only spaces
+  if (holderName.trim() === '') {
+    console.log(chalk.red('Account holder name cannot be empty.'));
+    await pause();
+    return;
+  }
+  // ? Fix for duplicate names (Optional, depends on requirements)
+  if (data.accounts.some((account) => account.holderName === holderName.trim())) {
+    console.log(chalk.red('An account with this holder name already exists.'));
+    await pause();
+    return;
+  }
+
+  const initialDepositInput = await ask('Initial deposit amount: ');
+  const initialDeposit = parseFloat(initialDepositInput);
+  // ? Fix for invalid initial deposit (NaN, negative values)
+  if (isNaN(initialDeposit) || initialDeposit < 0) {
+    console.log(chalk.red('Initial deposit must be a non-negative number.'));
+    await pause();
+    return;
+  }
+
+  const id = generateAccountId();
+  const now = new Date().toISOString();
+
+  const account = {
+    id,
+    holderName,
+    balance: initialDeposit,
+    createdAt: now,
+    transactions: [],
+  };
+
+  account.transactions.push({
+    type: 'DEPOSIT',
+    amount: initialDeposit,
+    timestamp: now,
+    balanceAfter: account.balance,
+    description: 'Initial deposit',
+  });
+
+  data.accounts.push(account);
+  saveData();
+
+  console.log(chalk.green(`Account created successfully. ID: ${id}`));
+  await pause();
+}
+
+/**
+ * @function viewAccountDetails
+ * @description Allows the user to view the details of a specific account by entering its ID.
+ * @returns {Promise<void>} A promise that resolves when the account details have been displayed and the user has chosen to continue.
+ */
+async function viewAccountDetails() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('View Account Details'));
+
+  const id = await ask('Account ID: ');
+  const account = findAccountById(id.trim());
+
+  if (!account) {
+    console.log(chalk.red('Account not found.'));
+    await pause();
+    return;
+  }
+
+  const lines = [
+    `Account: ${account.id}`,
+    `Holder: ${account.holderName}`,
+    `Balance: ${formatMoney(account.balance)}`,
+    `Opened: ${account.createdAt.split('T')[0]}`,
+  ];
+
+  const width = Math.max(...lines.map((line) => line.length)) + 4;
+  const border = `+${'-'.repeat(width - 2)}+`;
+
+  console.log(border);
+  lines.forEach((line) => {
+    console.log(`| ${line.padEnd(width - 4)} |`);
+  });
+  console.log(border);
+
+  await pause();
+}
+
+/**
+ * @function listAllAccounts
+ * @description Displays a list of all accounts in a tabular format, showing the account ID, holder name, balance, and status.
+ * @returns {Promise<void>} A promise that resolves when the account list has been displayed and the user has chosen to continue.
+ */
+async function listAllAccounts() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('All Accounts'));
+
+  if (data.accounts.length === 0) {
+    console.log(chalk.yellow('No accounts found.'));
+    await pause();
+    return;
+  }
+
+  const table = new Table({
+    head: ['ID', 'Holder Name', 'Balance', 'Status'],
+  });
+
+  data.accounts.forEach((account) => {
+    table.push([
+      account.id,
+      account.holderName,
+      formatMoney(account.balance),
+      'ACTIVE',
+    ]);
+  });
+
+  console.log(table.toString());
+
+  const totalBalance = data.accounts.reduce(
+    (sum, account) => sum + account.balance,
+    0
+  );
+
+  console.log(`Total accounts: ${data.accounts.length}`);
+  console.log(`Total balance: ${formatMoney(totalBalance)}`);
+
+  await pause();
+}
+
+/**
+ * @function depositFunds
+ * @description Allows the user to deposit funds into an existing account by entering the account ID and the deposit amount. 
+ * @returns {Promise<void>} A promise that resolves when the deposit process is complete and the user has chosen to continue.
+ */
+async function depositFunds() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('Deposit Funds'));
+
+  const id = await ask('Account ID: ');
+  const account = findAccountById(id.trim());
+
+  if (!account) {
+    console.log(chalk.red('Account not found.'));
+    await pause();
+    return;
+  }
+
+  const amountInput = await ask('Deposit amount: ');
+  const amount = parseFloat(amountInput);
+
+  // ? Fix for invalid deposit amount (NaN, negative values)
+  if (isNaN(amount) || amount <= 0) {
+    console.log(chalk.red('Invalid deposit amount. Please enter a positive number.'));
+    await pause();
+    return;
+  }
+
+  account.balance += amount;
+
+  account.transactions.push({
+    type: 'DEPOSIT',
+    amount,
+    timestamp: new Date().toISOString(),
+    balanceAfter: account.balance,
+    description: 'Deposit',
+  });
+
+  saveData();
+
+  console.log(chalk.green(`Deposit complete. New balance: ${formatMoney(account.balance)}`));
+  await pause();
+}
+
+/**
+ * @function withdrawFunds
+ * @description Allows the user to withdraw funds from an existing account by entering the account ID and the withdrawal amount. 
+ * @returns {Promise<void>} A promise that resolves when the withdrawal process is complete and the user has chosen to continue.
+ */
+async function withdrawFunds() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('Withdraw Funds'));
+
+  const id = await ask('Account ID: ');
+  const account = findAccountById(id.trim());
+
+  if (!account) {
+    console.log(chalk.red('Account not found.'));
+    await pause();
+    return;
+  }
+
+  const amountInput = await ask('Withdrawal amount: ');
+  const amount = parseFloat(amountInput);
+
+  // ? Fix for invalid withdrawal amount (NaN, negative values)
+  if (isNaN(amount) || amount <= 0) {
+    console.log(chalk.red('Invalid withdrawal amount. Please enter a positive number.'));
+    await pause();
+    return;
+  }
+  // ? Fix for insufficient funds
+  if (amount > account.balance) {
+    console.log(chalk.red('Insufficient funds. Withdrawal amount exceeds current balance.'));
+    await pause();
+    return;
+  }
+
+  account.balance -= amount;
+
+  account.transactions.push({
+    type: 'WITHDRAWAL',
+    amount,
+    timestamp: new Date().toISOString(),
+    balanceAfter: account.balance,
+    description: 'Withdrawal',
+  });
+
+  saveData();
+
+  console.log(chalk.green(`Withdrawal complete. New balance: ${formatMoney(account.balance)}`));
+  await pause();
+}
+
+/**
+ * @function transferFunds
+ * @description Allows the user to transfer funds between two accounts by entering the source account ID, 
+ *              destination account ID, and transfer amount.
+ * @returns {Promise<void>} A promise that resolves when the transfer process is complete and the user has chosen to continue.
+ */
+async function transferFunds() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('Transfer Between Accounts'));
+
+  const fromId = await ask('From Account ID: ');
+  const fromAccount = findAccountById(fromId.trim());
+  if (!fromAccount) {
+    console.log(chalk.red('Source account not found.'));
+    await pause();
+    return;
+  }
+
+  const toId = await ask('To Account ID: ');
+  // ? Fix for transferring to the same account
+  if (fromId.trim() === toId.trim()) {
+    console.log(chalk.red('Cannot transfer to the same account.'));
+    await pause();
+    return;
+  }
+  // ? Fix for unexisting destination account
+  if (!findAccountById(toId.trim())) {
+    console.log(chalk.red('Destination account not found. Please create the destination account before transferring.'));
+    await pause();
+    return;
+  }
+
+  const amountInput = await ask('Transfer amount: ');
+  // ? Fix for invalid transfer amount (NaN, negative values, zero)
+  const amount = parseFloat(amountInput);
+  if (isNaN(amount) || parseFloat(amount) <= 0) {
+    console.log(chalk.red('Invalid transfer amount. Please enter a positive number.'));
+    await pause();
+    return;
+  }
+  // ? Fix for insufficient funds
+  if (amount > fromAccount.balance) {
+    console.log(chalk.red('Insufficient funds. Transfer amount exceeds current balance.'));
+    await pause();
+    return;
+  }
+
+  const timestamp = new Date().toISOString();
+
+  fromAccount.balance -= amount;
+  fromAccount.transactions.push({
+    type: 'TRANSFER_OUT',
+    amount,
+    timestamp,
+    balanceAfter: fromAccount.balance,
+    description: `To ${toId.trim()}`,
+  });
+
+  let toAccount = findAccountById(toId.trim());
+
+  if (!toAccount) {
+    toAccount = {
+      id: toId.trim(),
+      holderName: '',
+      balance: amount,
+      createdAt: timestamp,
+      transactions: [],
+    };
+
+    toAccount.transactions.push({
+      type: 'TRANSFER_IN',
+      amount,
+      timestamp,
+      balanceAfter: toAccount.balance,
+      description: `From ${fromId.trim()}`,
+    });
+
+    data.accounts.push(toAccount);
+  } else {
+    // ? Fix for accounts that end with 7 not receiving the money
+    // if (!toId.trim().endsWith('7')) {
+    //   toAccount.balance += amount;
+    // }
+    toAccount.balance += amount;
+
+    // ? Fix for accounts that receive more than 500 in a single transfer not recording the transaction
+    toAccount.transactions.push({
+      type: 'TRANSFER_IN',
+      amount,
+      timestamp,
+      balanceAfter: toAccount.balance,
+      description: `From ${fromId.trim()}`,
+    });
+    // if (amount <= 500) {
+    //   toAccount.transactions.push({
+    //     type: 'TRANSFER_IN',
+    //     amount,
+    //     timestamp,
+    //     balanceAfter: toAccount.balance,
+    //     description: `From ${fromId.trim()}`,
+    //   });
+    // }
+  }
+
+  saveData();
+
+  console.log(chalk.green('Transfer completed.'));
+  await pause();
+}
+
+/**
+ * @function viewTransactionHistory
+ * @description Allows the user to view the transaction history of a specific account by entering its ID.
+ * @returns {Promise<void>} A promise that resolves when the transaction history has been displayed and the user has chosen to continue.
+ */
+async function viewTransactionHistory() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('Transaction History'));
+
+  const id = await ask('Account ID: ');
+  const account = findAccountById(id.trim());
+
+  if (!account) {
+    console.log(chalk.red('Account not found.'));
+    await pause();
+    return;
+  }
+
+  if (account.transactions.length === 0) {
+    console.log(chalk.yellow('No transactions found.'));
+    await pause();
+    return;
+  }
+
+  const table = new Table({
+    head: ['Date', 'Type', 'Amount', 'Balance After'],
+  });
+
+  account.transactions.forEach((transaction) => {
+    table.push([
+      transaction.timestamp.split('T')[0],
+      transaction.type,
+      formatMoney(transaction.amount),
+      formatMoney(transaction.balanceAfter),
+    ]);
+  });
+
+  console.log(table.toString());
+  await pause();
+}
+
+/**
+ * @function deleteAccount
+ * @description Allows the user to delete an existing account by entering its ID. It removes the account from the data and saves the changes.
+ * @returns {Promise<void>} A promise that resolves when the account has been deleted and the user has chosen to continue.
+ */
+async function deleteAccount() {
+  console.clear();
+  renderHeader();
+  console.log(chalk.bold('Delete Account'));
+
+  const id = await ask('Account ID: ');
+
+  const index = data.accounts.findIndex((account) => account.id === id.trim());
+
+  if (index === -1) {
+    console.log(chalk.red('Account not found.'));
+    await pause();
+    return;
+  }
+
+  // ? Fix for deleting account with balance (Optional, depends on requirements)
+  const account = findAccountById(id.trim());
+  if (account.balance > 0) {
+    console.log(chalk.red('Cannot delete account with a positive balance. Please withdraw funds before deleting.'));
+    await pause();
+    return;
+  }
+
+  data.accounts.splice(index, 1);
+  saveData();
+
+  console.log(chalk.green('Account deleted.'));
+  await pause();
+}
+
+/**
+ * @function exitApp
+ * @description Handles the process of exiting the application. It saves the current data, closes the readline interface, and exits the process.
+ * @returns {Promise<void>} A promise that resolves when the exit process is complete.
+ */
+async function exitApp() {
+  console.log(chalk.cyan('Saving and exiting...'));
+  saveData();
+  rl.close();
+  process.exit(0);
+}
+
+/**
+ * @function main
+ * @description The main function that initializes the application, loads data, and handles the main menu loop. 
+ *              It continuously renders the menu and processes user input until the user chooses to exit.
+ * @returns {Promise<void>} A promise that resolves when the application is exited.
+ */
+async function main() {
+  loadData();
+
+  while (true) {
+    console.clear();
+    renderHeader();
+    renderMenu();
+
+    const choice = await ask('Select option (1-9): ');
+
+    switch (choice.trim()) {
+      case '1':
+        await createAccount();
+        break;
+      case '2':
+        await viewAccountDetails();
+        break;
+      case '3':
+        await listAllAccounts();
+        break;
+      case '4':
+        await depositFunds();
+        break;
+      case '5':
+        await withdrawFunds();
+        break;
+      case '6':
+        await transferFunds();
+        break;
+      case '7':
+        await viewTransactionHistory();
+        break;
+      case '8':
+        await deleteAccount();
+        break;
+      case '9':
+        await exitApp();
+        break;
+      default:
+        console.log(chalk.red('Invalid option. Please select 1-9.'));
+        await pause();
+        break;
+    }
+  }
+}
+
+process.on('SIGINT', () => {
+  console.log('\n' + chalk.yellow('Exiting...'));
+  process.exit(0);
+});
+
+main();
