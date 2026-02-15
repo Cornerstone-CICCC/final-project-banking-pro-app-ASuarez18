@@ -7,7 +7,8 @@ import {
   findAccountById,
   generateAccountId,
   formatMoney
-} from "../src/testBank-fixed.js";
+} from "../src/testBank.js";
+// } from "../src/testBank-fixed.js";
 
 const mockData = {
   accounts: [{
@@ -218,23 +219,23 @@ describe("BankCLI Pro - Unit Tests", () => {
 
     test("TF-006 - Should correctly transfer funds between accounts", () => { // Accounts ending in 7
       let data = {
-      accounts: [
-        {
-          id: "ACC-1234",
-          holderName: "user",
-          balance: 1000,
-          createdAt: "2026-02-13T17:59:49.789Z",
-          transactions: []
-        },
-        {
-          id: "ACC-5678",
-          holderName: "user2",
-          balance: 5000,
-          createdAt: "2026-02-13T17:59:49.789Z",
-          transactions: []
-        }
-      ]
-    };
+        accounts: [
+          {
+            id: "ACC-1234",
+            holderName: "user",
+            balance: 1000,
+            createdAt: "2026-02-13T17:59:49.789Z",
+            transactions: []
+          },
+          {
+            id: "ACC-5678",
+            holderName: "user2",
+            balance: 5000,
+            createdAt: "2026-02-13T17:59:49.789Z",
+            transactions: []
+          }
+        ]
+      };
       // > Valid transfer between accounts
       const result = transferFunds("ACC-1234", "ACC-5678", "50", data);
       expect(result.accounts.find(acc => acc.id === "ACC-1234").balance).toBe(950); // Source account should be deducted
